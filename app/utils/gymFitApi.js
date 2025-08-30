@@ -1,49 +1,23 @@
 // Gym Fit API integration utilities
-// Replace 'YOUR_API_KEY' with your actual gym-fit-api key
+// Using RapidAPI gym-fit endpoint
 
-const GYM_FIT_API_BASE_URL = 'https://api.gym-fit.com/v1'; // Replace with actual API endpoint
-const API_KEY = 'YOUR_API_KEY'; // Replace with your actual API key
+const RAPIDAPI_KEY = '6966b7dff4msh1accdbc4da177cap1875adjsn5476308fc9d6';
+const RAPIDAPI_HOST = 'gym-fit.p.rapidapi.com';
 
 export class GymFitAPI {
-  constructor(apiKey = API_KEY) {
+  constructor(apiKey = RAPIDAPI_KEY) {
     this.apiKey = apiKey;
-    this.baseUrl = GYM_FIT_API_BASE_URL;
+    this.host = RAPIDAPI_HOST;
   }
 
-  // Analyze pose data and get feedback
-  async analyzePose(poseData, exerciseType) {
+  // Get exercise details by ID
+  async getExerciseById(exerciseId) {
     try {
-      const response = await fetch(`${this.baseUrl}/analyze-pose`, {
-        method: 'POST',
+      const response = await fetch(`https://${this.host}/v1/exercises/${exerciseId}`, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-        },
-        body: JSON.stringify({
-          poseData,
-          exerciseType,
-          timestamp: new Date().toISOString(),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`API request failed: ${response.status}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error('Gym Fit API Error:', error);
-      // Fallback to local analysis if API fails
-      return this.localPoseAnalysis(poseData, exerciseType);
-    }
-  }
-
-  // Get exercise reference data
-  async getExerciseReference(exerciseType) {
-    try {
-      const response = await fetch(`${this.baseUrl}/exercises/${exerciseType}`, {
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`,
+          'x-rapidapi-key': this.apiKey,
+          'x-rapidapi-host': this.host,
         },
       });
 
@@ -53,25 +27,20 @@ export class GymFitAPI {
 
       return await response.json();
     } catch (error) {
-      console.error('Failed to fetch exercise reference:', error);
+      console.error('Failed to fetch exercise:', error);
       return null;
     }
   }
 
-  // Compare current pose with reference pose
-  async comparePoses(currentPose, referencePose, exerciseType) {
+  // Get all exercises
+  async getAllExercises() {
     try {
-      const response = await fetch(`${this.baseUrl}/compare-poses`, {
-        method: 'POST',
+      const response = await fetch(`https://${this.host}/v1/exercises`, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
+          'x-rapidapi-key': this.apiKey,
+          'x-rapidapi-host': this.host,
         },
-        body: JSON.stringify({
-          currentPose,
-          referencePose,
-          exerciseType,
-        }),
       });
 
       if (!response.ok) {
@@ -80,15 +49,47 @@ export class GymFitAPI {
 
       return await response.json();
     } catch (error) {
-      console.error('Pose comparison failed:', error);
-      return this.localPoseComparison(currentPose, referencePose, exerciseType);
+      console.error('Failed to fetch exercises:', error);
+      return [];
+    }
+  }
+
+  // Get exercises by body part
+  async getExercisesByBodyPart(bodyPart) {
+    try {
+      const response = await fetch(`https://${this.host}/v1/exercises?bodyPart=${bodyPart}`, {
+        method: 'GET',
+        headers: {
+          'x-rapidapi-key': this.apiKey,
+          'x-rapidapi-host': this.host,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Failed to fetch exercises by body part:', error);
+      return [];
+    }
+  }
+
+  // Analyze pose data and get feedback (local analysis since API doesn't provide pose analysis)
+  async analyzePose(poseData, exerciseType) {
+    try {
+      // Since the gym-fit API doesn't provide pose analysis, we'll use local analysis
+      // In a real implementation, you might want to send pose data to a separate pose analysis service
+      return this.localPoseAnalysis(poseData, exerciseType);
+    } catch (error) {
+      console.error('Pose analysis failed:', error);
+      return this.localPoseAnalysis(poseData, exerciseType);
     }
   }
 
   // Local fallback analysis (when API is unavailable)
   localPoseAnalysis(poseData, exerciseType) {
-    // This is a simplified local analysis
-    // In a real implementation, you'd have more sophisticated pose analysis
     const analysis = {
       confidence: 0.8,
       feedback: [],
@@ -113,9 +114,9 @@ export class GymFitAPI {
           validAngles++;
 
           if (currentAngle < target.min) {
-            analysis.feedback.push(`${angleKey} is too small. Increase to ${target.ideal}°`);
+            analysis.feedback.push(`${angleKey.replace(/([A-Z])/g, ' $1').toLowerCase()} is too small. Increase to ${target.ideal}°`);
           } else if (currentAngle > target.max) {
-            analysis.feedback.push(`${angleKey} is too large. Decrease to ${target.ideal}°`);
+            analysis.feedback.push(`${angleKey.replace(/([A-Z])/g, ' $1').toLowerCase()} is too large. Decrease to ${target.ideal}°`);
           }
         }
       });
@@ -198,12 +199,48 @@ export class GymFitAPI {
         leftKnee: { min: 80, max: 120, ideal: 100 },
         rightKnee: { min: 80, max: 120, ideal: 100 },
       },
+      benchPress: {
+        leftElbow: { min: 80, max: 100, ideal: 90 },
+        rightElbow: { min: 80, max: 100, ideal: 90 },
+        leftShoulder: { min: 0, max: 20, ideal: 10 },
+        rightShoulder: { min: 0, max: 20, ideal: 10 },
+        leftHip: { min: 160, max: 180, ideal: 170 },
+        rightHip: { min: 160, max: 180, ideal: 170 },
+      },
     };
 
     return targetAngles[exerciseType] || targetAngles.pushup;
   }
 
-  // Get exercise instructions
+  // Map exercise names to our internal types
+  mapExerciseNameToType(exerciseName) {
+    const exerciseMap = {
+      'Push-up': 'pushup',
+      'Squat': 'squat',
+      'Plank': 'plank',
+      'Deadlift': 'deadlift',
+      'Lunge': 'lunge',
+      'Bench Press (Barbell)': 'benchPress',
+      'Incline Bench Press (Barbell)': 'benchPress',
+      'Decline Bench Press (Barbell)': 'benchPress',
+      'Close Grip Bench Press (Barbell)': 'benchPress',
+    };
+
+    return exerciseMap[exerciseName] || 'pushup';
+  }
+
+  // Get exercise instructions from API response
+  getExerciseInstructionsFromAPI(exerciseData) {
+    if (!exerciseData || !exerciseData.instructions) {
+      return this.getExerciseInstructions('pushup'); // fallback
+    }
+
+    return exerciseData.instructions
+      .sort((a, b) => a.order - b.order)
+      .map(instruction => instruction.description);
+  }
+
+  // Get exercise instructions (fallback)
   getExerciseInstructions(exerciseType) {
     const instructions = {
       pushup: [
@@ -240,10 +277,43 @@ export class GymFitAPI {
         "Keep your front knee behind your toes",
         "Push back to the starting position",
         "Alternate legs for each repetition"
+      ],
+      benchPress: [
+        "Lie on the bench with your eyes directly under the barbell",
+        "Grab the bar with a slightly wider than shoulder-width grip",
+        "Bring your shoulder blades together and lower your shoulders",
+        "Inhale and lower the barbell slowly to touch your chest",
+        "Exhale and push the barbell back up to the starting position"
       ]
     };
 
     return instructions[exerciseType] || instructions.pushup;
+  }
+
+  // Get target muscles from API response
+  getTargetMusclesFromAPI(exerciseData) {
+    if (!exerciseData || !exerciseData.targetMuscles) {
+      return [];
+    }
+
+    return exerciseData.targetMuscles.map(muscle => ({
+      id: muscle.id,
+      name: muscle.name,
+      bodyPart: muscle.bodyPart
+    }));
+  }
+
+  // Get secondary muscles from API response
+  getSecondaryMusclesFromAPI(exerciseData) {
+    if (!exerciseData || !exerciseData.secondaryMuscles) {
+      return [];
+    }
+
+    return exerciseData.secondaryMuscles.map(muscle => ({
+      id: muscle.id,
+      name: muscle.name,
+      bodyPart: muscle.bodyPart
+    }));
   }
 }
 
