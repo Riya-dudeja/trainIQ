@@ -13,9 +13,9 @@ export default function PosePage() {
     if (typeof window === "undefined") return;
 
     const loadScripts = async () => {
-      // Use a specific, recent version for stability
-  const poseUrl = "https://unpkg.com/@mediapipe/pose/pose.js";
-  const drawingUrl = "https://unpkg.com/@mediapipe/drawing_utils/drawing_utils.js";
+      // Use versioned CDN links for stability
+  const poseUrl = "https://unpkg.com/@mediapipe/pose@0.5.1675469404/pose.js";
+  const drawingUrl = "https://unpkg.com/@mediapipe/drawing_utils@0.3.1675466124/drawing_utils.js";
 
       // Helper to load a script only once
       const loadScriptOnce = (url, globalCheck) => {
@@ -46,7 +46,7 @@ export default function PosePage() {
       if (!window.Pose) return;
       poseInstance = new window.Pose({
         locateFile: (file) =>
-          `https://unpkg.com/@mediapipe/pose/${file}`,
+          `https://unpkg.com/@mediapipe/pose@0.5.1675469404/${file}`,
       });
 
       poseInstance.setOptions({
@@ -126,6 +126,7 @@ export default function PosePage() {
 
     return () => {
       if (animationId) cancelAnimationFrame(animationId);
+      if (poseInstance?.close) poseInstance.close();
     };
   }, []);
 
