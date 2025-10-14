@@ -2,13 +2,15 @@
 const nextConfig = {
   // Enable experimental features for better MediaPipe compatibility
   experimental: {
-    // Disable Turbopack for MediaPipe compatibility if needed
-    turbo: {
-      rules: {
-        '*.wasm': {
-          loaders: ['file-loader'],
-          as: '*.wasm',
-        },
+    // Other experimental features can go here
+  },
+  
+  // Configure Turbopack rules (moved from experimental.turbo)
+  turbopack: {
+    rules: {
+      '*.wasm': {
+        loaders: ['file-loader'],
+        as: '*.wasm',
       },
     },
   },
