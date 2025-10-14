@@ -78,3 +78,7 @@ MIT
 
 ## Author
 Riya Dudeja
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2a450d022b2e2501c91959d40e2f4d360ef6807e
