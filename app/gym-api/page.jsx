@@ -33,28 +33,46 @@ export default function GymAPIPage() {
   const [pushupCount, setPushupCount] = useState(0);
   const [pushupPhase, setPushupPhase] = useState('up');
   const [isPushupMode, setIsPushupMode] = useState(false);
+  const [isDemoMode, setIsDemoMode] = useState(false);
   
   // UI State
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(false);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [lastSpokenFeedback, setLastSpokenFeedback] = useState("");
+  const [lastSpeechTime, setLastSpeechTime] = useState(0);
   const [showControls, setShowControls] = useState(true);
 
-  // Audio feedback functions
+  // Audio feedback functions with improved reliability
   const speakFeedback = (text) => {
-    if (!isAudioEnabled || !speechSupported || text === lastSpokenFeedback) return;
+    if (!isAudioEnabled || !speechSupported) return;
+    
+    // Cancel any existing speech to prevent queue buildup
+    window.speechSynthesis.cancel();
+    
+    // Only prevent exact same text if spoken very recently (within 2 seconds)
+    const now = Date.now();
+    if (text === lastSpokenFeedback && now - lastSpeechTime < 2000) return;
     
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 0.9;
     utterance.pitch = 1;
     utterance.volume = 0.8;
     
+    // Add error handling and restart speech synthesis if needed
+    utterance.onerror = (event) => {
+      console.log('Speech synthesis error:', event);
+      // Reset speech synthesis
+      window.speechSynthesis.cancel();
+    };
+    
+    utterance.onend = () => {
+      setLastSpokenFeedback("");
+    };
+    
     window.speechSynthesis.speak(utterance);
     setLastSpokenFeedback(text);
-    
-    // Clear the last spoken after 5 seconds to allow repeating
-    setTimeout(() => setLastSpokenFeedback(""), 5000);
+    setLastSpeechTime(now);
   };
 
   const getScoreBasedFeedback = (score, feedback) => {
@@ -64,10 +82,105 @@ export default function GymAPIPage() {
     return "Check your form - " + (feedback[0] || "focus on your posture");
   };
 
-  // Check for speech synthesis support
+  // Enhanced audio coaching with specific form instructions for full squat cycle
+  const getDetailedFormFeedback = (angles, confidence) => {
+    const instructions = [];
+    
+    if (!angles || confidence < 0.5) {
+      return ["Position yourself better in the camera view"];
+    }
+
+    // Knee angle analysis for squats - full movement cycle
+    if (angles.leftKnee && angles.rightKnee) {
+      const avgKnee = (angles.leftKnee + angles.rightKnee) / 2;
+      const kneeImbalance = Math.abs(angles.leftKnee - angles.rightKnee);
+      
+      // Progressive depth instructions throughout the movement
+      if (avgKnee > 170) {
+        instructions.push("Get ready - prepare to squat down");
+      } else if (avgKnee > 160) {
+        instructions.push("Start squatting - bend your knees now");
+      } else if (avgKnee > 150) {
+        instructions.push("Good start - keep bending your knees");
+      } else if (avgKnee > 140) {
+        instructions.push("Keep going down - squat deeper");
+      } else if (avgKnee > 130) {
+        instructions.push("Almost there - go a bit deeper");
+      } else if (avgKnee > 120) {
+        instructions.push("Good depth - now you can come back up");
+      } else if (avgKnee > 110) {
+        instructions.push("Excellent depth - drive up through your heels");
+      } else if (avgKnee > 100) {
+        instructions.push("Perfect squat - push up strong");
+      } else if (avgKnee < 90) {
+        instructions.push("Very deep - now explode upward");
+      }
+      
+      // Continuous balance and form instructions
+      if (kneeImbalance > 25) {
+        instructions.push("Major imbalance - balance your weight evenly");
+      } else if (kneeImbalance > 20) {
+        instructions.push("Keep both knees aligned, balance your weight");
+      } else if (kneeImbalance > 15) {
+        instructions.push("Try to keep your knees more even");
+      } else if (kneeImbalance > 10) {
+        instructions.push("Good balance - minor knee adjustment needed");
+      }
+      
+      // Hip angle analysis
+      if (angles.leftHip && angles.rightHip) {
+        const avgHip = (angles.leftHip + angles.rightHip) / 2;
+        
+        if (avgHip > 170) {
+          instructions.push("Sit back more, push your hips back");
+        } else if (avgHip < 120) {
+          instructions.push("Keep your chest up, don't lean too far forward");
+        }
+      }
+    }
+    
+    // Single knee analysis if only one visible
+    else if (angles.leftKnee || angles.rightKnee) {
+      const kneeAngle = angles.leftKnee || angles.rightKnee;
+      
+      if (kneeAngle > 160) {
+        instructions.push("Bend your knee more to squat down");
+      } else if (kneeAngle > 140) {
+        instructions.push("Keep going down, bend your knee more");
+      } else if (kneeAngle < 90) {
+        instructions.push("Excellent depth! Now stand back up");
+      } else if (kneeAngle < 120) {
+        instructions.push("Perfect squat! Push up strong");
+      }
+    }
+    
+    // General posture reminders
+    if (instructions.length === 0) {
+      const motivational = [
+        "Keep your core tight and back straight",
+        "Good form! Control the movement", 
+        "Breathe steadily throughout the movement",
+        "Focus on quality over speed"
+      ];
+      instructions.push(motivational[Math.floor(Math.random() * motivational.length)]);
+    }
+    
+    return instructions;
+  };
+
+  // Check for speech synthesis support and keep it alive
   useEffect(() => {
     if (typeof window !== "undefined" && 'speechSynthesis' in window) {
       setSpeechSupported(true);
+      
+      // Keep speech synthesis alive - some browsers pause it after inactivity
+      const keepAlive = setInterval(() => {
+        if (window.speechSynthesis && window.speechSynthesis.paused) {
+          window.speechSynthesis.resume();
+        }
+      }, 5000);
+      
+      return () => clearInterval(keepAlive);
     }
   }, []);
 
@@ -189,11 +302,12 @@ export default function GymAPIPage() {
           return Math.abs(angle - previousAngle) <= maxChange;
         }
         
-        // Intelligent feedback system with hysteresis
+        // Intelligent feedback system with enhanced audio coaching
         class IntelligentFeedback {
           constructor() {
             this.lastFeedback = [];
             this.feedbackCooldown = {};
+            this.audioInstructionCooldown = {};
             this.stabilityThreshold = 3; // frames
             this.confidenceThreshold = 0.7;
           }
@@ -204,17 +318,17 @@ export default function GymAPIPage() {
             }
             
             const newFeedback = [];
-            const now = Date.now();
+            const currentTimestamp = Date.now();
             
             // Knee angle analysis with stability check
             if (angles.avgKnee && angles.avgKnee < 160) {
-              if (!this.feedbackCooldown.kneeForm || now - this.feedbackCooldown.kneeForm > 3000) {
+              if (!this.feedbackCooldown.kneeForm || currentTimestamp - this.feedbackCooldown.kneeForm > 3000) {
                 if (angles.avgKnee < 90) {
                   newFeedback.push("Great squat depth!");
-                  this.feedbackCooldown.kneeForm = now;
+                  this.feedbackCooldown.kneeForm = currentTimestamp;
                 } else if (angles.avgKnee < 130) {
                   newFeedback.push("Good squat form");
-                  this.feedbackCooldown.kneeForm = now;
+                  this.feedbackCooldown.kneeForm = currentTimestamp;
                 }
               }
             }
@@ -222,9 +336,9 @@ export default function GymAPIPage() {
             // Balance check
             if (angles.leftKnee && angles.rightKnee) {
               const imbalance = Math.abs(angles.leftKnee - angles.rightKnee);
-              if (imbalance > 15 && (!this.feedbackCooldown.balance || now - this.feedbackCooldown.balance > 4000)) {
+              if (imbalance > 15 && (!this.feedbackCooldown.balance || currentTimestamp - this.feedbackCooldown.balance > 4000)) {
                 newFeedback.push("Keep knees aligned");
-                this.feedbackCooldown.balance = now;
+                this.feedbackCooldown.balance = currentTimestamp;
               }
             }
             
@@ -234,6 +348,27 @@ export default function GymAPIPage() {
             }
             
             return this.lastFeedback;
+          }
+
+          // Get specific audio coaching instructions
+          getAudioInstructions(angles, confidence) {
+            if (confidence < 0.5) return null;
+            
+            const instructionTime = Date.now();
+            
+            // Get detailed form feedback with balanced cooldown for stable coaching
+            if (!this.audioInstructionCooldown.lastInstruction || 
+                instructionTime - this.audioInstructionCooldown.lastInstruction > 2000) {
+              
+              const instructions = getDetailedFormFeedback(angles, confidence);
+              
+              if (instructions && instructions.length > 0) {
+                this.audioInstructionCooldown.lastInstruction = instructionTime;
+                return instructions[0]; // Return the first/most important instruction
+              }
+            }
+            
+            return null;
           }
         }
         
@@ -270,24 +405,29 @@ export default function GymAPIPage() {
           } else if (rightKnee) {
             kneeAngle = rightKnee;
           } else {
-            const now = Date.now();
-          const timeSinceLastChange = now - lastPhaseChange;
+            return { score: 0, feedback: "Position legs in camera view", phase: squatPhase, reps: repCount };
+          }
+
+          console.log(`🔍 Squat Analysis - Knee: ${kneeAngle.toFixed(0)}°, Phase: ${squatPhase}`);
           
-          // State machine for squat phases with hysteresis
+            const currentTime = Date.now();
+          const timeSinceLastChange = currentTime - lastPhaseChange;          // State machine for squat phases with hysteresis
           if (squatPhase === 'standing') {
             // Start squat when knees begin to bend significantly
             if (kneeAngle < 160 && timeSinceLastChange > 500) {
               squatPhase = 'descending';
-              lastPhaseChange = now;
+              lastPhaseChange = currentTime;
               return { score: 60, feedback: "Good, keep going down", phase: squatPhase, reps: repCount };
             }
+            // Provide feedback while standing
+            return { score: 30, feedback: "Ready to squat - bend your knees to begin", phase: squatPhase, reps: repCount };
           }
           
           else if (squatPhase === 'descending') {
             // Reached bottom position
             if (kneeAngle < 120) {
               squatPhase = 'bottom';
-              lastPhaseChange = now;
+              lastPhaseChange = currentTime;
               const depth = 180 - kneeAngle;
               let score = 50;
               let feedback = "Good depth!";
@@ -305,15 +445,23 @@ export default function GymAPIPage() {
               
               return { score, feedback, phase: squatPhase, reps: repCount };
             }
+            // Provide continuous feedback while descending
+            if (kneeAngle > 140) {
+              return { score: 50, feedback: "Keep going down - squat deeper", phase: squatPhase, reps: repCount };
+            } else {
+              return { score: 70, feedback: "Good depth - keep going", phase: squatPhase, reps: repCount };
+            }
           }
           
           else if (squatPhase === 'bottom') {
             // Start ascending when knees extend
             if (kneeAngle > 130 && timeSinceLastChange > 300) {
               squatPhase = 'ascending';
-              lastPhaseChange = now;
+              lastPhaseChange = currentTime;
               return { score: 75, feedback: "Good, push up!", phase: squatPhase, reps: repCount };
             }
+            // Provide feedback while at bottom
+            return { score: 80, feedback: "Hold the position - now drive up", phase: squatPhase, reps: repCount };
           }
           
           else if (squatPhase === 'ascending') {
@@ -321,8 +469,27 @@ export default function GymAPIPage() {
             if (kneeAngle > 160 && timeSinceLastChange > 500) {
               squatPhase = 'standing';
               repCount++;
-              lastPhaseChange = now;
-              return { score: 90, feedback: `Rep ${repCount} completed! 🎉`, phase: squatPhase, reps: repCount };
+              lastPhaseChange = currentTime;
+              
+              // Add motivational feedback based on rep count
+              let repFeedback = `Rep ${repCount} completed! 🎉`;
+              if (repCount === 1) {
+                repFeedback = "First rep done! Great start! 💪";
+              } else if (repCount === 5) {
+                repFeedback = "5 reps! You're doing amazing! 🔥";
+              } else if (repCount === 10) {
+                repFeedback = "10 reps! Outstanding! Keep it up! ⚡";
+              } else if (repCount % 5 === 0) {
+                repFeedback = `${repCount} reps! Fantastic work! 🚀`;
+              }
+              
+              return { score: 90, feedback: repFeedback, phase: squatPhase, reps: repCount, justCompleted: true };
+            }
+            // Provide continuous feedback while ascending
+            if (kneeAngle < 140) {
+              return { score: 60, feedback: "Push up stronger - drive through your heels", phase: squatPhase, reps: repCount };
+            } else {
+              return { score: 75, feedback: "Almost up - complete the movement", phase: squatPhase, reps: repCount };
             }
           }
           
@@ -330,73 +497,7 @@ export default function GymAPIPage() {
           if (kneeAngle > 170) {
             return { score: 20, feedback: "Stand ready, then squat down", phase: squatPhase, reps: repCount };
           } else {
-          }
             return { score: 0, feedback: "Position legs in camera view", phase: squatPhase, reps: repCount };
-          }
-          
-          console.log(`🔍 Squat Analysis - Knee: ${avgKnee.toFixed(0)}°, Phase: ${squatPhase}`);
-          
-          const now = Date.now();
-          const timeSinceLastChange = now - lastPhaseChange;
-          
-          // State machine for squat detection
-          if (squatPhase === 'standing') {
-            // Start descending when knees bend significantly
-            if (avgKnee < 160 && timeSinceLastChange > 500) {
-              squatPhase = 'descending';
-              lastPhaseChange = now;
-              return { score: 60, feedback: "Good, keep going down", phase: squatPhase, reps: repCount };
-            }
-          }
-          
-          else if (squatPhase === 'descending') {
-            // Reached bottom position
-            if (avgKnee < 120) {
-              squatPhase = 'bottom';
-              lastPhaseChange = now;
-              const depth = 180 - avgKnee;
-              let score = 50;
-              let feedback = "Good depth!";
-              
-              if (depth > 80) { // Very deep squat
-                score = 95;
-                feedback = "Excellent squat depth!";
-              } else if (depth > 60) { // Good squat
-                score = 85;
-                feedback = "Perfect squat form!";
-              } else if (depth > 40) { // Okay squat
-                score = 70;
-                feedback = "Good, try to go deeper";
-              }
-              
-              return { score, feedback, phase: squatPhase, reps: repCount };
-            }
-          }
-          
-          else if (squatPhase === 'bottom') {
-            // Start ascending when knees extend
-            if (avgKnee > 130 && timeSinceLastChange > 300) {
-              squatPhase = 'ascending';
-              lastPhaseChange = now;
-              return { score: 75, feedback: "Good, push up!", phase: squatPhase, reps: repCount };
-            }
-          }
-          
-          else if (squatPhase === 'ascending') {
-            // Complete rep when back to standing
-            if (avgKnee > 160 && timeSinceLastChange > 500) {
-              squatPhase = 'standing';
-              repCount++;
-              lastPhaseChange = now;
-              return { score: 90, feedback: `Rep ${repCount} completed! 🎉`, phase: squatPhase, reps: repCount };
-            }
-          }
-          
-          // Default state feedback
-          if (avgKnee > 170) {
-            return { score: 20, feedback: "Stand ready, then squat down", phase: squatPhase, reps: repCount };
-          } else {
-            return { score: 40, feedback: `Keep going - ${squatPhase}`, phase: squatPhase, reps: repCount };
           }
         }
 
@@ -530,8 +631,8 @@ export default function GymAPIPage() {
             // Get intelligent feedback
             const smartFeedback = intelligentFeedback.updateFeedback(smoothedAngles, overallConfidence);
             
-            // Only update UI if we have sufficient confidence
-            if (overallConfidence > 0.6) {
+            // Only update UI if we have sufficient confidence AND not in demo mode
+            if (overallConfidence > 0.6 && !isDemoMode) {
               setPoseScore(analysis.score);
               setPushupCount(analysis.reps);
               
@@ -546,20 +647,43 @@ export default function GymAPIPage() {
               
               setFeedback(currentFeedback);
               
-              // Audio feedback for main analysis
-              if (isAudioEnabled && analysis.feedback) {
-                speakFeedback(getScoreBasedFeedback(analysis.score, [analysis.feedback]));
+              // Enhanced Audio Feedback System with Detailed Instructions (Real Mode Only)
+              if (isAudioEnabled && !isDemoMode) {
+                // Special celebration for completed reps
+                if (analysis.justCompleted) {
+                  speakFeedback(analysis.feedback);
+                  
+                  // Add motivational milestone messages
+                  if (analysis.reps === 1) {
+                    setTimeout(() => speakFeedback("Perfect! Now let's keep that form consistent"), 1500);
+                  } else if (analysis.reps === 5) {
+                    setTimeout(() => speakFeedback("You're building great strength! Keep going!"), 1500);
+                  } else if (analysis.reps === 10) {
+                    setTimeout(() => speakFeedback("Incredible endurance! Your form is improving!"), 1500);
+                  }
+                }
+                // Prioritize detailed form coaching instructions
+                else {
+                  const audioInstruction = intelligentFeedback.getAudioInstructions(smoothedAngles, overallConfidence);
+                  if (audioInstruction) {
+                    // Use our detailed instructions as PRIMARY feedback
+                    speakFeedback(audioInstruction);
+                  }
+                  // Only use generic feedback if no detailed instructions available
+                  else if (analysis.feedback) {
+                    speakFeedback(getScoreBasedFeedback(analysis.score, [analysis.feedback]));
+                  }
+                  
+                  // Smart coaching tips as secondary feedback
+                  if (smartFeedback.length > 0) {
+                    setTimeout(() => {
+                      speakFeedback(smartFeedback[0]);
+                    }, 3000);
+                  }
+                }
               }
               
-              // Audio feedback for smart coaching tips
-              if (isAudioEnabled && smartFeedback.length > 0) {
-                // Speak the first smart feedback with a slight delay
-                setTimeout(() => {
-                  speakFeedback(smartFeedback[0]);
-                }, 1000);
-              }
-              
-            } else {
+            } else if (!isDemoMode) {
               const lowConfidenceFeedback = [
                 "📍 Move into camera view for better detection",
                 `Confidence: ${(overallConfidence * 100).toFixed(0)}%`
@@ -567,9 +691,13 @@ export default function GymAPIPage() {
               
               setFeedback(lowConfidenceFeedback);
               
-              // Audio feedback for low confidence
-              if (isAudioEnabled && overallConfidence < 0.3) {
-                speakFeedback("Please move into camera view");
+              // Enhanced audio feedback for positioning (Real Mode Only)
+              if (isAudioEnabled && !isDemoMode) {
+                if (overallConfidence < 0.3) {
+                  speakFeedback("Step back and center yourself in the camera view");
+                } else if (overallConfidence < 0.5) {
+                  speakFeedback("Move a bit to get your full body in view");
+                }
               }
             }
 
@@ -684,16 +812,22 @@ export default function GymAPIPage() {
     };
   }, [isHydrated, isLoaded]);
 
-  // Demo-ready initialization - works with or without backend
+  // Demo-ready initialization - only as fallback when real pose detection fails
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined" || isLoaded || isDemoMode) return;
 
-    const initializeDemo = async () => {
-      try {
-        console.log('🎯 TrainIQ Demo Mode Initialized');
-        setIsLoaded(true);
-        setApiStatus("connected");
-        setIsHydrated(true);
+    // Wait a bit to see if real pose detection initializes
+    const demoTimeout = setTimeout(() => {
+      if (!isLoaded) {
+        console.log('🎯 Real pose detection failed, falling back to Demo Mode');
+        setIsDemoMode(true);
+        
+        const initializeDemo = async () => {
+          try {
+            console.log('🎯 TrainIQ Demo Mode Initialized');
+            setIsLoaded(true);
+            setApiStatus("connected");
+            setIsHydrated(true);
         
         // Start demo simulation
         const demoInterval = setInterval(() => {
@@ -736,12 +870,14 @@ export default function GymAPIPage() {
         setFeedback(['Demo Mode Active', 'Camera working for presentation']);
         setIsLoaded(true);
       }
-    };
+        };
 
-    initializeDemo();
-  }, [selectedExercise, isAudioEnabled]);
+        initializeDemo();
+      }
+    }, 3000); // Wait 3 seconds for real pose detection
 
-  // Fetch exercises
+    return () => clearTimeout(demoTimeout);
+  }, []);  // Fetch exercises
   useEffect(() => {
     if (!isHydrated) return;
 
@@ -1104,16 +1240,61 @@ return (
             <div className="p-2 bg-gray-800/30 rounded-lg border border-gray-700/50">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-400">Audio:</span>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => setIsAudioEnabled(!isAudioEnabled)}
+                    className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
+                      isAudioEnabled
+                        ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
+                        : 'bg-gray-600/50 text-gray-400 hover:bg-gray-600/70'
+                    }`}
+                  >
+                    <span>{isAudioEnabled ? "🔊" : "🔇"}</span>
+                    <span>{isAudioEnabled ? "On" : "Off"}</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      // Test audio function
+                      window.speechSynthesis.cancel();
+                      const testUtterance = new SpeechSynthesisUtterance("Audio test - TrainIQ is working");
+                      testUtterance.rate = 0.9;
+                      testUtterance.volume = 0.8;
+                      window.speechSynthesis.speak(testUtterance);
+                    }}
+                    className="px-1 py-1 rounded text-xs bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30"
+                    title="Test Audio"
+                  >
+                    🔧
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Demo Mode Toggle */}
+            <div className="p-2 bg-gray-800/30 rounded-lg border border-gray-700/50">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400">Mode:</span>
                 <button
-                  onClick={() => setIsAudioEnabled(!isAudioEnabled)}
+                  onClick={() => {
+                    setIsDemoMode(!isDemoMode);
+                    if (!isDemoMode) {
+                      // Switch to demo mode
+                      setPoseScore(85);
+                      setFeedback(['Demo Mode: High scores for presentation']);
+                    } else {
+                      // Switch to real mode
+                      setPoseScore(0);
+                      setFeedback(['Real Mode: Actual pose detection']);
+                    }
+                  }}
                   className={`flex items-center gap-1 px-2 py-1 rounded text-xs transition-colors ${
-                    isAudioEnabled
-                      ? 'bg-green-500/20 text-green-400 hover:bg-green-500/30'
-                      : 'bg-gray-600/50 text-gray-400 hover:bg-gray-600/70'
+                    isDemoMode
+                      ? 'bg-purple-500/20 text-purple-400 hover:bg-purple-500/30'
+                      : 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30'
                   }`}
                 >
-                  <span>{isAudioEnabled ? "🔊" : "🔇"}</span>
-                  <span>{isAudioEnabled ? "On" : "Off"}</span>
+                  <span>{isDemoMode ? "🎭" : "🎯"}</span>
+                  <span>{isDemoMode ? "Demo" : "Real"}</span>
                 </button>
               </div>
             </div>
