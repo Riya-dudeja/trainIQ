@@ -86,8 +86,15 @@ export default function GymAPIPage() {
   const getDetailedFormFeedback = (angles, confidence) => {
     const instructions = [];
     
-    if (!angles || confidence < 0.5) {
-      return ["Position yourself better in the camera view"];
+    // Prioritize positioning feedback for low confidence
+    if (!angles || confidence < 0.7) {
+      if (confidence < 0.3) {
+        return ["Step back and center yourself in the camera view"];
+      } else if (confidence < 0.5) {
+        return ["Move to get your full body in the camera view"];
+      } else if (confidence < 0.7) {
+        return ["Adjust your position for better pose detection"];
+      }
     }
 
     // Knee angle analysis for squats - full movement cycle
@@ -697,6 +704,8 @@ export default function GymAPIPage() {
                   speakFeedback("Step back and center yourself in the camera view");
                 } else if (overallConfidence < 0.5) {
                   speakFeedback("Move a bit to get your full body in view");
+                } else if (overallConfidence < 0.7) {
+                  speakFeedback("Adjust your position for better detection");
                 }
               }
             }
