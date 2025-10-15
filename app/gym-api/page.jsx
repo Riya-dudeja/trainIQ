@@ -83,8 +83,8 @@ export default function GymAPIPage() {
     return "Check your form - " + (feedback[0] || "focus on your posture");
   };
 
-  // Enhanced audio coaching with specific form instructions for full squat cycle
-  const getDetailedFormFeedback = (angles, confidence) => {
+  // Enhanced audio coaching with exercise-specific instructions
+  const getDetailedFormFeedback = (angles, confidence, selectedExercise = null) => {
     const instructions = [];
     
     // Prioritize positioning feedback for low confidence
@@ -98,78 +98,120 @@ export default function GymAPIPage() {
       }
     }
 
-    // Knee angle analysis for squats - full movement cycle
-    if (angles.leftKnee && angles.rightKnee) {
-      const avgKnee = (angles.leftKnee + angles.rightKnee) / 2;
-      const kneeImbalance = Math.abs(angles.leftKnee - angles.rightKnee);
-      
-      // Progressive depth instructions throughout the movement
-      if (avgKnee > 170) {
-        instructions.push("Get ready - prepare to squat down");
-      } else if (avgKnee > 160) {
-        instructions.push("Start squatting - bend your knees now");
-      } else if (avgKnee > 150) {
-        instructions.push("Good start - keep bending your knees");
-      } else if (avgKnee > 140) {
-        instructions.push("Keep going down - squat deeper");
-      } else if (avgKnee > 130) {
-        instructions.push("Almost there - go a bit deeper");
-      } else if (avgKnee > 120) {
-        instructions.push("Good depth - now you can come back up");
-      } else if (avgKnee > 110) {
-        instructions.push("Excellent depth - drive up through your heels");
-      } else if (avgKnee > 100) {
-        instructions.push("Perfect squat - push up strong");
-      } else if (avgKnee < 90) {
-        instructions.push("Very deep - now explode upward");
-      }
-      
-      // Continuous balance and form instructions
-      if (kneeImbalance > 25) {
-        instructions.push("Major imbalance - balance your weight evenly");
-      } else if (kneeImbalance > 20) {
-        instructions.push("Keep both knees aligned, balance your weight");
-      } else if (kneeImbalance > 15) {
-        instructions.push("Try to keep your knees more even");
-      } else if (kneeImbalance > 10) {
-        instructions.push("Good balance - minor knee adjustment needed");
-      }
-      
-      // Hip angle analysis
-      if (angles.leftHip && angles.rightHip) {
-        const avgHip = (angles.leftHip + angles.rightHip) / 2;
-        
-        if (avgHip > 170) {
-          instructions.push("Sit back more, push your hips back");
-        } else if (avgHip < 120) {
-          instructions.push("Keep your chest up, don't lean too far forward");
-        }
-      }
+    // Yoga pose specific feedback
+    if (selectedExercise?.id === 'warrior-pose') {
+      const warriorTips = [
+        "Step your back foot 3 to 4 feet behind you",
+        "Turn your back foot out 45 degrees",
+        "Bend your front knee directly over your ankle",
+        "Keep your back leg straight and strong",
+        "Reach your arms overhead with intention",
+        "Ground through your feet and lift through your crown",
+        "Breathe deeply and hold the pose with strength"
+      ];
+      const randomTip = warriorTips[Math.floor(Math.random() * warriorTips.length)];
+      instructions.push(randomTip);
     }
     
-    // Single knee analysis if only one visible
-    else if (angles.leftKnee || angles.rightKnee) {
-      const kneeAngle = angles.leftKnee || angles.rightKnee;
+    else if (selectedExercise?.id === 'tree-pose') {
+      const treeTips = [
+        "Press your standing foot firmly into the ground",
+        "Place your lifted foot on your inner thigh, not your knee",
+        "Keep your hips square and facing forward",
+        "Bring your palms together at your heart center",
+        "Find a focal point to help with balance",
+        "Engage your core for stability",
+        "Breathe calmly and grow tall like a tree"
+      ];
+      const randomTip = treeTips[Math.floor(Math.random() * treeTips.length)];
+      instructions.push(randomTip);
+    }
+    
+    // Traditional exercise feedback (squats, pushups, etc.)
+    else {
+      // Knee angle analysis for squats - full movement cycle
+      if (angles.leftKnee && angles.rightKnee) {
+        const avgKnee = (angles.leftKnee + angles.rightKnee) / 2;
+        const kneeImbalance = Math.abs(angles.leftKnee - angles.rightKnee);
+        
+        // Progressive depth instructions throughout the movement
+        if (avgKnee > 170) {
+          instructions.push("Get ready - prepare to squat down");
+        } else if (avgKnee > 160) {
+          instructions.push("Start squatting - bend your knees now");
+        } else if (avgKnee > 150) {
+          instructions.push("Good start - keep bending your knees");
+        } else if (avgKnee > 140) {
+          instructions.push("Keep going down - squat deeper");
+        } else if (avgKnee > 130) {
+          instructions.push("Almost there - go a bit deeper");
+        } else if (avgKnee > 120) {
+          instructions.push("Good depth - now you can come back up");
+        } else if (avgKnee > 110) {
+          instructions.push("Excellent depth - drive up through your heels");
+        } else if (avgKnee > 100) {
+          instructions.push("Perfect squat - push up strong");
+        } else if (avgKnee < 90) {
+          instructions.push("Very deep - now explode upward");
+        }
+        
+        // Continuous balance and form instructions
+        if (kneeImbalance > 25) {
+          instructions.push("Major imbalance - balance your weight evenly");
+        } else if (kneeImbalance > 20) {
+          instructions.push("Keep both knees aligned, balance your weight");
+        } else if (kneeImbalance > 15) {
+          instructions.push("Try to keep your knees more even");
+        } else if (kneeImbalance > 10) {
+          instructions.push("Good balance - minor knee adjustment needed");
+        }
+        
+        // Hip angle analysis
+        if (angles.leftHip && angles.rightHip) {
+          const avgHip = (angles.leftHip + angles.rightHip) / 2;
+          
+          if (avgHip > 170) {
+            instructions.push("Sit back more, push your hips back");
+          } else if (avgHip < 120) {
+            instructions.push("Keep your chest up, don't lean too far forward");
+          }
+        }
+      }
       
-      if (kneeAngle > 160) {
-        instructions.push("Bend your knee more to squat down");
-      } else if (kneeAngle > 140) {
-        instructions.push("Keep going down, bend your knee more");
-      } else if (kneeAngle < 90) {
-        instructions.push("Excellent depth! Now stand back up");
-      } else if (kneeAngle < 120) {
-        instructions.push("Perfect squat! Push up strong");
+      // Single knee analysis if only one visible
+      else if (angles.leftKnee || angles.rightKnee) {
+        const kneeAngle = angles.leftKnee || angles.rightKnee;
+        
+        if (kneeAngle > 160) {
+          instructions.push("Bend your knee more to squat down");
+        } else if (kneeAngle > 140) {
+          instructions.push("Keep going down, bend your knee more");
+        } else if (kneeAngle < 90) {
+          instructions.push("Excellent depth! Now stand back up");
+        } else if (kneeAngle < 120) {
+          instructions.push("Perfect squat! Push up strong");
+        }
       }
     }
     
     // General posture reminders
     if (instructions.length === 0) {
-      const motivational = [
-        "Keep your core tight and back straight",
-        "Good form! Control the movement", 
-        "Breathe steadily throughout the movement",
-        "Focus on quality over speed"
-      ];
+      let motivational;
+      if (selectedExercise?.id === 'warrior-pose' || selectedExercise?.id === 'tree-pose') {
+        motivational = [
+          "Breathe deeply and find your center",
+          "Stay present and focused on your pose", 
+          "Feel the strength and stability in your body",
+          "Hold with intention and mindfulness"
+        ];
+      } else {
+        motivational = [
+          "Keep your core tight and back straight",
+          "Good form! Control the movement", 
+          "Breathe steadily throughout the movement",
+          "Focus on quality over speed"
+        ];
+      }
       instructions.push(motivational[Math.floor(Math.random() * motivational.length)]);
     }
     
@@ -368,7 +410,7 @@ export default function GymAPIPage() {
             if (!this.audioInstructionCooldown.lastInstruction || 
                 instructionTime - this.audioInstructionCooldown.lastInstruction > 2000) {
               
-              const instructions = getDetailedFormFeedback(angles, confidence);
+              const instructions = getDetailedFormFeedback(angles, confidence, selectedExercise);
               
               if (instructions && instructions.length > 0) {
                 this.audioInstructionCooldown.lastInstruction = instructionTime;
@@ -509,6 +551,159 @@ export default function GymAPIPage() {
           }
         }
 
+        // Helper function to calculate angle between three points
+        function calculateAngle(a, b, c) {
+          // Calculate angle at point b using points a, b, c
+          const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+          let angle = Math.abs(radians * 180.0 / Math.PI);
+          
+          // Ensure angle is between 0 and 180 degrees
+          if (angle > 180.0) {
+            angle = 360 - angle;
+          }
+          
+          return angle;
+        }
+
+        // Yoga pose analysis functions
+        function analyzeWarriorPose(landmarks) {
+          if (!landmarks || landmarks.length < 33) {
+            return { score: 0, feedback: "Position yourself in camera view", phase: 'setup', reps: 0 };
+          }
+
+          const lm = landmarks;
+          
+          // Key landmarks for Warrior I
+          const leftHip = lm[23];
+          const rightHip = lm[24];
+          const leftKnee = lm[25];
+          const rightKnee = lm[26];
+          const leftAnkle = lm[27];
+          const rightAnkle = lm[28];
+          const leftShoulder = lm[11];
+          const rightShoulder = lm[12];
+          const leftWrist = lm[15];
+          const rightWrist = lm[16];
+
+          let score = 0;
+          let feedback = [];
+
+          // Check foot positioning (wide stance)
+          const ankleDistance = Math.abs(leftAnkle.x - rightAnkle.x);
+          if (ankleDistance > 0.2) {
+            score += 25;
+            feedback.push("Good wide stance");
+          } else {
+            feedback.push("Step your back foot further apart for a wider stance");
+          }
+
+          // Check front knee bend (should be bent, back leg straight)
+          const frontKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+          const backKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+          
+          if (frontKneeAngle < 120) {
+            score += 25;
+            feedback.push("Front knee well bent");
+          } else {
+            feedback.push("Bend your front knee more, aim for 90 degrees");
+          }
+
+          if (backKneeAngle > 160) {
+            score += 25;
+            feedback.push("Back leg straight - excellent");
+          } else {
+            feedback.push("Straighten your back leg completely");
+          }
+
+          // Check arms raised overhead
+          const averageArmHeight = (leftWrist.y + rightWrist.y) / 2;
+          const shoulderHeight = (leftShoulder.y + rightShoulder.y) / 2;
+          
+          if (averageArmHeight < shoulderHeight - 0.1) {
+            score += 25;
+            feedback.push("Arms raised beautifully");
+          } else {
+            feedback.push("Raise your arms high overhead and reach for the sky");
+          }
+
+          return { 
+            score, 
+            feedback: feedback.join(" • "), 
+            phase: 'holding', 
+            reps: score > 75 ? 1 : 0 
+          };
+        }
+
+        function analyzeTreePose(landmarks) {
+          if (!landmarks || landmarks.length < 33) {
+            return { score: 0, feedback: "Position yourself in camera view", phase: 'setup', reps: 0 };
+          }
+
+          const lm = landmarks;
+          
+          // Key landmarks for Tree Pose
+          const leftHip = lm[23];
+          const rightHip = lm[24];
+          const leftKnee = lm[25];
+          const rightKnee = lm[26];
+          const leftAnkle = lm[27];
+          const rightAnkle = lm[28];
+          const leftShoulder = lm[11];
+          const rightShoulder = lm[12];
+          const leftWrist = lm[15];
+          const rightWrist = lm[16];
+
+          let score = 0;
+          let feedback = [];
+
+          // Check single leg balance (one foot should be raised)
+          const leftFootHeight = leftAnkle.y;
+          const rightFootHeight = rightAnkle.y;
+          const footHeightDiff = Math.abs(leftFootHeight - rightFootHeight);
+          
+          if (footHeightDiff > 0.1) {
+            score += 30;
+            feedback.push("Good balance on one leg");
+          } else {
+            feedback.push("Lift one foot up and place it on your inner thigh");
+          }
+
+          // Check hip alignment (should be level)
+          const hipLevel = Math.abs(leftHip.y - rightHip.y);
+          if (hipLevel < 0.05) {
+            score += 25;
+            feedback.push("Hips level and strong");
+          } else {
+            feedback.push("Keep your hips level and square to the front");
+          }
+
+          // Check hands position (prayer position at chest)
+          const handsDistance = Math.sqrt(
+            Math.pow(leftWrist.x - rightWrist.x, 2) + 
+            Math.pow(leftWrist.y - rightWrist.y, 2)
+          );
+          
+          const handsAtChest = (leftWrist.y + rightWrist.y) / 2;
+          const chestLevel = (leftShoulder.y + rightShoulder.y) / 2;
+          
+          if (handsDistance < 0.1 && Math.abs(handsAtChest - chestLevel) < 0.1) {
+            score += 25;
+            feedback.push("Beautiful prayer hands");
+          } else {
+            feedback.push("Bring palms together at your heart center");
+          }
+
+          // Check stability (minimal swaying)
+          score += 20; // Base stability score
+
+          return { 
+            score, 
+            feedback: feedback.join(" • "), 
+            phase: 'balancing', 
+            reps: score > 70 ? 1 : 0 
+          };
+        }
+
         poseInstance.onResults((results) => {
           if (!canvasElement || !ctx) return;
 
@@ -636,8 +831,16 @@ export default function GymAPIPage() {
             console.log('🔄 Smoothed angles:', smoothedAngles);
             console.log('📊 Confidence:', overallConfidence.toFixed(2));
 
-            // ENHANCED squat analysis with smoothed angles
-            const analysis = analyzeSquatForm(smoothedAngles);
+            // ENHANCED analysis based on selected exercise
+            let analysis;
+            if (selectedExercise?.id === 'warrior-pose') {
+              analysis = analyzeWarriorPose(lm);
+            } else if (selectedExercise?.id === 'tree-pose') {
+              analysis = analyzeTreePose(lm);
+            } else {
+              // Default to squat analysis
+              analysis = analyzeSquatForm(smoothedAngles);
+            }
             
             // Get intelligent feedback
             const smartFeedback = intelligentFeedback.updateFeedback(smoothedAngles, overallConfidence);
@@ -647,14 +850,27 @@ export default function GymAPIPage() {
               setPoseScore(analysis.score);
               setPushupCount(analysis.reps);
               
-              const currentFeedback = [
-                `🏋️ REPS: ${analysis.reps} | ${analysis.feedback}`,
-                `Phase: ${analysis.phase.toUpperCase()}`,
-                `Left Knee: ${smoothedAngles.leftKnee ? smoothedAngles.leftKnee.toFixed(0) + '°' : 'N/A'}`,
-                `Right Knee: ${smoothedAngles.rightKnee ? smoothedAngles.rightKnee.toFixed(0) + '°' : 'N/A'}`,
-                `Avg Knee: ${smoothedAngles.avgKnee ? smoothedAngles.avgKnee.toFixed(0) + '°' : 'N/A'}`,
-                ...smartFeedback
-              ];
+              let currentFeedback;
+              if (selectedExercise?.id === 'warrior-pose' || selectedExercise?.id === 'tree-pose') {
+                // Yoga pose feedback
+                currentFeedback = [
+                  `🧘 ${selectedExercise.name}: ${analysis.feedback}`,
+                  `Score: ${analysis.score}/100`,
+                  `Phase: ${analysis.phase.toUpperCase()}`,
+                  `Hold: ${analysis.reps > 0 ? 'Excellent pose!' : 'Keep adjusting'}`,
+                  ...smartFeedback
+                ];
+              } else {
+                // Traditional exercise feedback
+                currentFeedback = [
+                  `🏋️ REPS: ${analysis.reps} | ${analysis.feedback}`,
+                  `Phase: ${analysis.phase.toUpperCase()}`,
+                  `Left Knee: ${smoothedAngles.leftKnee ? smoothedAngles.leftKnee.toFixed(0) + '°' : 'N/A'}`,
+                  `Right Knee: ${smoothedAngles.rightKnee ? smoothedAngles.rightKnee.toFixed(0) + '°' : 'N/A'}`,
+                  `Avg Knee: ${smoothedAngles.avgKnee ? smoothedAngles.avgKnee.toFixed(0) + '°' : 'N/A'}`,
+                  ...smartFeedback
+                ];
+              }
               
               setFeedback(currentFeedback);
               
@@ -675,14 +891,41 @@ export default function GymAPIPage() {
                 }
                 // Prioritize detailed form coaching instructions
                 else {
-                  const audioInstruction = intelligentFeedback.getAudioInstructions(smoothedAngles, overallConfidence);
-                  if (audioInstruction) {
-                    // Use our detailed instructions as PRIMARY feedback
-                    speakFeedback(audioInstruction);
-                  }
-                  // Only use generic feedback if no detailed instructions available
-                  else if (analysis.feedback) {
-                    speakFeedback(getScoreBasedFeedback(analysis.score, [analysis.feedback]));
+                  // For yoga poses, provide specific corrective audio feedback
+                  if (selectedExercise?.id === 'warrior-pose' || selectedExercise?.id === 'tree-pose') {
+                    // Parse the feedback string to get individual corrections
+                    if (analysis.feedback) {
+                      const corrections = analysis.feedback.split(' • ');
+                      const negativeCorrections = corrections.filter(c => 
+                        c.includes('Step your back foot further') || 
+                        c.includes('Bend your front knee more') || 
+                        c.includes('Straighten your back leg') || 
+                        c.includes('Raise your arms overhead') ||
+                        c.includes('Lift one foot up') ||
+                        c.includes('Keep your hips level') ||
+                        c.includes('Bring palms together')
+                      );
+                      
+                      // Speak the most important correction
+                      if (negativeCorrections.length > 0) {
+                        speakFeedback(negativeCorrections[0]);
+                      } else if (analysis.score > 75) {
+                        speakFeedback("Excellent pose! Hold this position and breathe deeply.");
+                      } else if (analysis.score > 50) {
+                        speakFeedback("Good form! Make small adjustments to perfect your pose.");
+                      }
+                    }
+                  } else {
+                    // Traditional exercise feedback
+                    const audioInstruction = intelligentFeedback.getAudioInstructions(smoothedAngles, overallConfidence);
+                    if (audioInstruction) {
+                      // Use our detailed instructions as PRIMARY feedback
+                      speakFeedback(audioInstruction);
+                    }
+                    // Only use generic feedback if no detailed instructions available
+                    else if (analysis.feedback) {
+                      speakFeedback(getScoreBasedFeedback(analysis.score, [analysis.feedback]));
+                    }
                   }
                   
                   // Smart coaching tips as secondary feedback
@@ -871,7 +1114,10 @@ export default function GymAPIPage() {
             }
           } else {
             setPoseScore(85);
-            setFeedback(['AI Trainer Ready!', 'Select an exercise to begin']);
+            // Only set default feedback if no exercise is selected
+            if (!selectedExercise) {
+              setFeedback(['AI Trainer Ready!', 'Select an exercise to begin']);
+            }
           }
         }, 1500);
 
@@ -895,6 +1141,26 @@ export default function GymAPIPage() {
     if (!isHydrated) return;
 
     const fetchExercises = async () => {
+      // Always include yoga poses first
+      const yogaPoses = [
+        {
+          id: 'warrior-pose',
+          name: 'Warrior I Pose',
+          bodyPart: 'full body',
+          equipment: 'body weight',
+          target: 'balance & flexibility',
+          instructions: ['Step left foot back 3-4 feet', 'Turn left foot out 45 degrees', 'Bend right knee over ankle', 'Raise arms overhead', 'Hold for 30 seconds']
+        },
+        {
+          id: 'tree-pose',
+          name: 'Tree Pose',
+          bodyPart: 'full body',
+          equipment: 'body weight',
+          target: 'balance & core',
+          instructions: ['Stand on left foot', 'Place right foot on inner left thigh', 'Bring palms together at chest', 'Focus on a point ahead', 'Hold for 30 seconds']
+        }
+      ];
+
       try {
         setApiStatus("loading");
         const results = await gymFitAPI.searchExercises({
@@ -902,14 +1168,18 @@ export default function GymAPIPage() {
           bodyPart: selectedBodyPart,
           equipment: selectedEquipment,
         });
-        setExercises(results || []);
+        
+        // Combine yoga poses with API results
+        const allExercises = [...yogaPoses, ...(results || [])];
+        setExercises(allExercises);
         setApiStatus("connected");
       } catch (error) {
         console.error("Failed to fetch exercises:", error);
         setApiStatus("offline");
         
-        // Set demo exercises for presentation
+        // Set demo exercises for presentation (including yoga poses)
         setExercises([
+          ...yogaPoses,
           {
             id: 'pushup',
             name: 'Push-up',
@@ -1012,6 +1282,61 @@ export default function GymAPIPage() {
 
     fetchExercises();
   }, [isHydrated, searchTerm, selectedBodyPart, selectedEquipment]);
+
+  // Update feedback when exercise is selected
+  useEffect(() => {
+    if (!selectedExercise) {
+      setFeedback(['AI Trainer Ready!', 'Select an exercise to begin']);
+      setPoseScore(0);
+    } else {
+      if (selectedExercise.id === 'warrior-pose') {
+        setFeedback([
+          `🧘 ${selectedExercise.name} selected`,
+          'Step back foot 3-4 feet, bend front knee',
+          'Raise arms overhead and hold strong',
+          'Get in position to begin pose analysis'
+        ]);
+        setPoseScore(20); // Set initial score
+        
+        // Immediate audio instruction
+        if (isAudioEnabled) {
+          setTimeout(() => {
+            speakFeedback("Warrior pose selected. Step your back foot 3 to 4 feet behind you, bend your front knee, and raise your arms overhead.");
+          }, 500);
+        }
+      } else if (selectedExercise.id === 'tree-pose') {
+        setFeedback([
+          `🧘 ${selectedExercise.name} selected`, 
+          'Stand on one foot, place other on inner thigh',
+          'Bring palms together at chest and balance',
+          'Get in position to begin pose analysis'
+        ]);
+        setPoseScore(20); // Set initial score
+        
+        // Immediate audio instruction
+        if (isAudioEnabled) {
+          setTimeout(() => {
+            speakFeedback("Tree pose selected. Stand on one foot, place the other on your inner thigh, and bring your palms together at your chest.");
+          }, 500);
+        }
+      } else {
+        setFeedback([
+          `🏋️ ${selectedExercise.name} selected`,
+          'Position yourself in camera view',
+          'Begin the exercise when ready',
+          'AI will track your form in real-time'
+        ]);
+        setPoseScore(15); // Set initial score
+        
+        // Immediate audio instruction
+        if (isAudioEnabled) {
+          setTimeout(() => {
+            speakFeedback(`${selectedExercise.name} selected. Position yourself in the camera view and begin when ready.`);
+          }, 500);
+        }
+      }
+    }
+  }, [selectedExercise, isAudioEnabled]);
 
 return (
   <div className="h-screen bg-black text-white overflow-hidden">
@@ -1127,6 +1452,20 @@ return (
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
             <h3 className="text-lg font-bold text-white">Live Feedback</h3>
           </div>
+
+          {/* Selected Exercise Display */}
+          {selectedExercise && (
+            <div className="mb-4 p-3 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                <span className="text-sm text-purple-300 font-medium">Active Exercise</span>
+              </div>
+              <div className="text-white font-bold text-sm">{selectedExercise.name}</div>
+              <div className="text-xs text-gray-400 capitalize mt-1">
+                {selectedExercise.target} • {selectedExercise.equipment}
+              </div>
+            </div>
+          )}
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-3 mb-4">

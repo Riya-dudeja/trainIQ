@@ -11,12 +11,15 @@ export default function ExercisesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBodyPart, setSelectedBodyPart] = useState('');
   const [selectedEquipment, setSelectedEquipment] = useState('');
+  const [isLoaded, setIsLoaded] = useState(false);
 
   const bodyParts = ['chest', 'back', 'shoulders', 'arms', 'legs', 'core', 'cardio'];
   const equipment = ['bodyweight', 'dumbbell', 'barbell', 'machine', 'cable', 'resistance band'];
 
   useEffect(() => {
     fetchExercises();
+    // Add entrance animation delay
+    setTimeout(() => setIsLoaded(true), 300);
   }, [searchQuery, selectedBodyPart, selectedEquipment]);
 
   const fetchExercises = async () => {
@@ -40,16 +43,19 @@ export default function ExercisesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-black">
         {/* Navigation */}
-        <nav className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <nav className="bg-black/90 backdrop-blur-sm border-b border-gray-800">
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">T</span>
+              <Link href="/" className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center">
+                  <span className="text-black font-bold text-lg">T</span>
                 </div>
-                <span className="text-white text-xl font-bold">trainIQ</span>
+                <div>
+                  <span className="text-white text-2xl font-bold">TrainIQ</span>
+                  <div className="text-green-400 text-xs font-medium">AI FITNESS TRAINER</div>
+                </div>
               </Link>
               <div className="text-gray-300">Exercise Database</div>
             </div>
@@ -59,8 +65,8 @@ export default function ExercisesPage() {
         {/* Loading State */}
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full animate-spin flex items-center justify-center mb-4 mx-auto">
-              <div className="w-8 h-8 bg-slate-900 rounded-full"></div>
+            <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-full animate-spin flex items-center justify-center mb-4 mx-auto">
+              <div className="w-8 h-8 bg-black rounded-full"></div>
             </div>
             <div className="text-white text-xl font-semibold">Loading exercises...</div>
             <div className="text-gray-400 mt-2">Fetching the latest workout data</div>
@@ -72,16 +78,19 @@ export default function ExercisesPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+      <div className="min-h-screen bg-black">
         {/* Navigation */}
-        <nav className="bg-black/20 backdrop-blur-sm border-b border-white/10">
+        <nav className="bg-black/90 backdrop-blur-sm border-b border-gray-800">
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">T</span>
+              <Link href="/" className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center">
+                  <span className="text-black font-bold text-lg">T</span>
                 </div>
-                <span className="text-white text-xl font-bold">trainIQ</span>
+                <div>
+                  <span className="text-white text-2xl font-bold">TrainIQ</span>
+                  <div className="text-green-400 text-xs font-medium">AI FITNESS TRAINER</div>
+                </div>
               </Link>
               <div className="text-gray-300">Exercise Database</div>
             </div>
@@ -98,7 +107,7 @@ export default function ExercisesPage() {
             <div className="text-gray-400 mb-6">{error}</div>
             <button 
               onClick={fetchExercises}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300"
+              className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300"
             >
               Try Again
             </button>
@@ -109,16 +118,19 @@ export default function ExercisesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-black text-white">
       {/* Navigation */}
-      <nav className="bg-black/20 backdrop-blur-sm border-b border-white/10 sticky top-0 z-50">
+      <nav className="bg-black/90 backdrop-blur-sm border-b border-gray-800 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">T</span>
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center">
+                <span className="text-black font-bold text-lg">T</span>
               </div>
-              <span className="text-white text-xl font-bold">trainIQ</span>
+              <div>
+                <span className="text-white text-2xl font-bold">TrainIQ</span>
+                <div className="text-green-400 text-xs font-medium">AI FITNESS TRAINER</div>
+              </div>
             </Link>
             <div className="text-gray-300">Exercise Database</div>
           </div>
@@ -127,38 +139,54 @@ export default function ExercisesPage() {
 
       {/* Header Section */}
       <div className="container mx-auto px-6 py-12">
-        <div className="text-center mb-12">
+        <div className={`text-center mb-12 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h1 className="text-5xl font-bold text-white mb-4">
-            Exercise <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Database</span>
+            Exercise <span className="bg-gradient-to-r from-yellow-400 to-blue-500 bg-clip-text text-transparent">Database</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Discover hundreds of exercises with detailed instructions, target muscles, and equipment requirements
+            Discover hundreds of exercises with detailed instructions, target muscles, and equipment requirements. Perfect for beginners starting their fitness journey!
           </p>
         </div>
 
-        {/* Search and Filters */}
-        <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 mb-8">
-          <div className="grid md:grid-cols-3 gap-4">
-            {/* Search Input */}
-            <div className="md:col-span-3">
-              <input
-                type="text"
-                placeholder="Search exercises..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
+        {/* Search and Filters - Streamlined */}
+        <div className={`mb-8 transition-all duration-1000 delay-200 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          {/* Main Search Bar */}
+          <div className="relative mb-4">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
             </div>
-            
+            <input
+              type="text"
+              placeholder="Search by exercise name, muscle group, or equipment..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-gray-900/30 border border-gray-700/30 rounded-xl pl-12 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-yellow-400/50 focus:border-yellow-400/30 focus:bg-gray-900/50 transition-all duration-300"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-yellow-400 transition-colors duration-200"
+              >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
+          </div>
+          
+          {/* Compact Filters */}
+          <div className="flex flex-wrap gap-3 items-center">
             {/* Body Part Filter */}
             <select
               value={selectedBodyPart}
               onChange={(e) => setSelectedBodyPart(e.target.value)}
-              className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="bg-gray-900/30 border border-gray-700/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-yellow-400/50 focus:border-yellow-400/30 transition-all duration-300 appearance-none cursor-pointer min-w-[140px]"
             >
-              <option value="" className="bg-slate-800">All Body Parts</option>
+              <option value="" className="bg-gray-800">🎯 All Body Parts</option>
               {bodyParts.map(part => (
-                <option key={part} value={part} className="bg-slate-800 capitalize">{part}</option>
+                <option key={part} value={part} className="bg-gray-800 capitalize">{part}</option>
               ))}
             </select>
 
@@ -166,25 +194,30 @@ export default function ExercisesPage() {
             <select
               value={selectedEquipment}
               onChange={(e) => setSelectedEquipment(e.target.value)}
-              className="bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="bg-gray-900/30 border border-gray-700/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-yellow-400/50 focus:border-yellow-400/30 transition-all duration-300 appearance-none cursor-pointer min-w-[140px]"
             >
-              <option value="" className="bg-slate-800">All Equipment</option>
+              <option value="" className="bg-gray-800">🏋️ All Equipment</option>
               {equipment.map(eq => (
-                <option key={eq} value={eq} className="bg-slate-800 capitalize">{eq}</option>
+                <option key={eq} value={eq} className="bg-gray-800 capitalize">{eq}</option>
               ))}
             </select>
 
-            {/* Clear Filters */}
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedBodyPart('');
-                setSelectedEquipment('');
-              }}
-              className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300"
-            >
-              Clear Filters
-            </button>
+            {/* Clear Filters - Compact */}
+            {(searchQuery || selectedBodyPart || selectedEquipment) && (
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedBodyPart('');
+                  setSelectedEquipment('');
+                }}
+                className="text-sm text-gray-400 hover:text-yellow-400 transition-colors duration-200 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-gray-800/30"
+              >
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Clear
+              </button>
+            )}
           </div>
         </div>
 
@@ -195,35 +228,44 @@ export default function ExercisesPage() {
           </div>
           <Link 
             href="/gym-api"
-            className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300"
+            className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-black font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-green-500/25"
           >
-            Start Training 🚀
+            Start AI Training 🚀
           </Link>
         </div>
 
         {/* Exercise Grid */}
         {exercises.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-all duration-1000 delay-400 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
             {exercises.map((exercise, index) => (
-              <div key={exercise.id || index} className="group bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 overflow-hidden hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
+              <div 
+                key={exercise.id || index} 
+                className={`group bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-800 overflow-hidden hover:border-green-400/50 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-400/20 ${
+                  isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+                }`}
+                style={{
+                  transitionDelay: `${index * 100}ms`
+                }}
+              >
                 {/* Exercise Image/GIF */}
                 {exercise.gifUrl && (
-                  <div className="aspect-video bg-gradient-to-br from-blue-500/20 to-purple-500/20 relative overflow-hidden">
+                  <div className="aspect-video bg-gradient-to-br from-green-400/20 to-blue-500/20 relative overflow-hidden">
                     <img 
                       src={exercise.gifUrl} 
                       alt={exercise.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={(e) => {
                         e.target.style.display = 'none';
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent group-hover:from-black/30 transition-all duration-300"></div>
+                    <div className="absolute inset-0 bg-green-400/0 group-hover:bg-green-400/10 transition-all duration-300"></div>
                   </div>
                 )}
 
                 <div className="p-6">
                   {/* Exercise Name */}
-                  <h3 className="text-xl font-bold text-white mb-3 capitalize">
+                  <h3 className="text-xl font-bold text-white mb-3 capitalize group-hover:text-green-400 transition-colors">
                     {exercise.name}
                   </h3>
 
@@ -240,7 +282,7 @@ export default function ExercisesPage() {
                       </span>
                     )}
                     {exercise.equipment && (
-                      <span className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm font-medium border border-purple-500/30">
+                      <span className="px-3 py-1 bg-gray-500/20 text-gray-300 rounded-full text-sm font-medium border border-gray-500/30">
                         🏋️ {exercise.equipment}
                       </span>
                     )}
@@ -253,12 +295,12 @@ export default function ExercisesPage() {
                       <div className="text-gray-400 text-sm space-y-1">
                         {exercise.instructions.slice(0, 2).map((instruction, idx) => (
                           <div key={idx} className="flex items-start">
-                            <span className="text-blue-400 mr-2">{idx + 1}.</span>
+                            <span className="text-green-400 mr-2">{idx + 1}.</span>
                             <span>{typeof instruction === 'object' ? instruction.description : instruction}</span>
                           </div>
                         ))}
                         {exercise.instructions.length > 2 && (
-                          <div className="text-blue-400 text-xs">
+                          <div className="text-green-400 text-xs">
                             +{exercise.instructions.length - 2} more steps...
                           </div>
                         )}
@@ -270,11 +312,11 @@ export default function ExercisesPage() {
                   <div className="flex space-x-2">
                     <Link
                       href={`/gym-api?exercise=${encodeURIComponent(exercise.name)}`}
-                      className="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-center"
+                      className="flex-1 bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-black font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-center transform hover:scale-105 hover:shadow-lg"
                     >
-                      Train Now
+                      Train with AI
                     </Link>
-                    <button className="px-4 py-2 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white rounded-lg transition-all duration-300">
+                    <button className="px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 hover:text-green-400 rounded-lg transition-all duration-300 transform hover:scale-110 hover:rotate-12">
                       ⭐
                     </button>
                   </div>
@@ -283,8 +325,8 @@ export default function ExercisesPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-20">
-            <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6 mx-auto">
+          <div className={`text-center py-20 transition-all duration-1000 delay-400 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            <div className="w-24 h-24 bg-gray-900/50 rounded-full flex items-center justify-center mb-6 mx-auto animate-pulse">
               <span className="text-4xl">🔍</span>
             </div>
             <h3 className="text-2xl font-bold text-white mb-2">No exercises found</h3>
@@ -295,7 +337,7 @@ export default function ExercisesPage() {
                 setSelectedBodyPart('');
                 setSelectedEquipment('');
               }}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300"
+              className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-green-500/25"
             >
               Show All Exercises
             </button>
@@ -304,17 +346,20 @@ export default function ExercisesPage() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-black/40 py-12 mt-20">
+      <footer className="bg-gray-900/80 py-12 mt-20 border-t border-gray-800">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold">T</span>
+            <div className="flex items-center space-x-3 mb-4 md:mb-0">
+              <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center">
+                <span className="text-black font-bold text-lg">T</span>
               </div>
-              <span className="text-white text-xl font-bold">trainIQ</span>
+              <div>
+                <span className="text-white text-xl font-bold">TrainIQ</span>
+                <div className="text-green-400 text-xs font-medium">AI FITNESS TRAINER</div>
+              </div>
             </div>
             <div className="text-gray-400 text-sm">
-              © 2025 trainIQ. Your AI-powered fitness companion.
+              © 2025 TrainIQ. Your AI-powered fitness companion for beginners and experts alike.
             </div>
           </div>
         </div>
