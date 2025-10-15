@@ -42,6 +42,7 @@ export default function GymAPIPage() {
   const [lastSpokenFeedback, setLastSpokenFeedback] = useState("");
   const [lastSpeechTime, setLastSpeechTime] = useState(0);
   const [showControls, setShowControls] = useState(true);
+  const [currentConfidence, setCurrentConfidence] = useState(0);
 
   // Audio feedback functions with improved reliability
   const speakFeedback = (text) => {
@@ -586,6 +587,9 @@ export default function GymAPIPage() {
 
             // Calculate overall confidence
             const overallConfidence = validAngles > 0 ? totalConfidence / validAngles : 0;
+            
+            // Update confidence state for UI display
+            setCurrentConfidence(overallConfidence);
             
             // Apply smoothing filters with outlier rejection
             const smoothedAngles = {};
@@ -1241,6 +1245,23 @@ return (
                     apiStatus === 'connected' ? 'bg-green-400' : 'bg-yellow-400'
                   }`}></div>
                   {apiStatus === 'connected' ? 'AI Ready' : 'Loading...'}
+                </span>
+              </div>
+            </div>
+            
+            {/* Confidence Indicator */}
+            <div className="p-2 bg-gray-800/30 rounded-lg border border-gray-700/50">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-gray-400">Detection:</span>
+                <span className={`flex items-center gap-1 ${
+                  currentConfidence > 0.7 ? 'text-green-400' : 
+                  currentConfidence > 0.5 ? 'text-yellow-400' : 'text-red-400'
+                }`}>
+                  <div className={`w-1.5 h-1.5 rounded-full ${
+                    currentConfidence > 0.7 ? 'bg-green-400' : 
+                    currentConfidence > 0.5 ? 'bg-yellow-400' : 'bg-red-400'
+                  }`}></div>
+                  {(currentConfidence * 100).toFixed(0)}%
                 </span>
               </div>
             </div>

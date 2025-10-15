@@ -64,13 +64,6 @@ const nextConfig = {
     return config;
   },
 
-  // Disable static optimization for pages using MediaPipe
-  exportPathMap: async function () {
-    return {
-      '/': { page: '/' },
-    };
-  },
-
   // Images configuration
   images: {
     domains: ['cdn.jsdelivr.net'],
