@@ -1,0 +1,16 @@
+# TrainIQ Backend Requirements
+# Flexible version requirements for better compatibility
+
+cvzone>=1.5.6
+opencv-python>=4.5.0
+numpy>=1.19.0
+flask>=2.0.0
+flask-cors>=3.0.0
+
+# MediaPipe - try different versions based on Python version
+# For Python 3.8-3.10: mediapipe>=0.8.0
+# For Python 3.11+: mediapipe>=0.10.0
+# We'll handle this in setup script
+
+# Optional for better performance
+# opencv-contrib-python>=4.5.0
