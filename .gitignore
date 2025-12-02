@@ -48,6 +48,16 @@ coverage/
 # Static assets
 ../public/*.svg
 
+# Demo, setup, and miscellaneous files
+../backend/setup.bat
+../backend/setup.sh
+../backend/get-pip.py
+../backend/MANUAL_INSTALL.md
+../backend/requirements.txt
+../backend/requirements_python313.txt
+../backend/pose_server.py
+../backend/pose_server_python313.py
+
 # debug
 npm-debug.log*
 yarn-debug.log*
