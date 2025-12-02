@@ -4,17 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { gymFitAPI, poseUtils } from "../utils/gymFitApi";
 
-const VALID_BODYPARTS = [
-  "back", "cardio", "chest", "lower arms", "lower legs", "neck", 
-  "shoulders", "upper arms", "upper legs", "waist"
-];
-const VALID_EQUIPMENT = [
-  "assisted", "band", "barbell", "body weight", "bosu ball", "cable", 
-  "dumbbell", "elliptical machine", "ez barbell", "hammer", "kettlebell", 
-  "leverage machine", "medicine ball", "olympic barbell", "resistance band", 
-  "roller", "rope", "skierg machine", "sled machine", "smith machine", 
-  "stability ball", "stationary bike", "stepmill machine", "tire", "trap bar", "upper body ergometer", "weighted"
-];
+// const VALID_BODYPARTS = [
+//   "back", "cardio", "chest", "lower arms", "lower legs", "neck", 
+//   "shoulders", "upper arms", "upper legs", "waist"
+// ];
+// const VALID_EQUIPMENT = [
+//   "assisted", "band", "barbell", "body weight", "bosu ball", "cable", 
+//   "dumbbell", "elliptical machine", "ez barbell", "hammer", "kettlebell", 
+//   "leverage machine", "medicine ball", "olympic barbell", "resistance band", 
+//   "roller", "rope", "skierg machine", "sled machine", "smith machine", 
+//   "stability ball", "stationary bike", "stepmill machine", "tire", "trap bar", "upper body ergometer", "weighted"
+// ];
 
 export default function GymAPIPage() {
   const webcamRef = useRef(null);
@@ -35,6 +35,11 @@ export default function GymAPIPage() {
   const [isPushupMode, setIsPushupMode] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
   
+  // Hold Timer State for Yoga Poses
+  const [holdTimer, setHoldTimer] = useState(0);
+  const [holdStartTime, setHoldStartTime] = useState(null);
+  const [isGoodFormHold, setIsGoodFormHold] = useState(false);
+  
   // UI State
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(false);
@@ -43,6 +48,30 @@ export default function GymAPIPage() {
   const [lastSpeechTime, setLastSpeechTime] = useState(0);
   const [showControls, setShowControls] = useState(true);
   const [currentConfidence, setCurrentConfidence] = useState(0);
+
+  // Exercise State Management
+  const [squatState, setSquatState] = useState('up');
+  const [squatRepCount, setSquatRepCount] = useState(0);
+  const [jackState, setJackState] = useState('together');
+  const [jackRepCount, setJackRepCount] = useState(0);
+  const [pushupState, setPushupState] = useState('up');
+  const [pushupRepCount, setPushupRepCount] = useState(0);
+
+  // Helper function to check if selected exercise is a yoga pose
+  const isYogaPose = (exerciseId) => {
+    return ['mountain-pose', 'downward-dog', 'child-pose', 'cobra-pose', 'triangle-pose', 'warrior-pose', 'tree-pose'].includes(exerciseId);
+  };
+
+  // Reset exercise states when exercise changes
+  useEffect(() => {
+    setSquatState('up');
+    setSquatRepCount(0);
+    setJackState('together');
+    setJackRepCount(0);
+    setPushupState('up');
+    setPushupRepCount(0);
+    setPushupCount(0); // Also reset the main counter
+  }, [selectedExercise?.id]);
 
   // Audio feedback functions with improved reliability
   const speakFeedback = (text) => {
@@ -99,7 +128,72 @@ export default function GymAPIPage() {
     }
 
     // Yoga pose specific feedback
-    if (selectedExercise?.id === 'warrior-pose') {
+    if (selectedExercise?.id === 'mountain-pose') {
+      const mountainTips = [
+        "Stand tall with feet hip-width apart",
+        "Let your arms hang naturally at your sides",
+        "Engage your thigh muscles and lift your kneecaps",
+        "Lengthen through the crown of your head",
+        "Breathe deeply and feel grounded like a mountain",
+        "Keep your shoulders relaxed and away from your ears",
+        "Distribute weight evenly across both feet"
+      ];
+      const randomTip = mountainTips[Math.floor(Math.random() * mountainTips.length)];
+      instructions.push(randomTip);
+    }
+    else if (selectedExercise?.id === 'downward-dog') {
+      const dogTips = [
+        "Press your palms firmly into the ground",
+        "Lift your hips up and back to create an inverted V",
+        "Straighten your arms and legs as much as possible",
+        "Keep your head between your arms",
+        "Press your heels toward the ground",
+        "Engage your core and breathe steadily",
+        "Create length through your spine"
+      ];
+      const randomTip = dogTips[Math.floor(Math.random() * dogTips.length)];
+      instructions.push(randomTip);
+    }
+    else if (selectedExercise?.id === 'child-pose') {
+      const childTips = [
+        "Kneel on your mat with big toes touching",
+        "Sit back on your heels and widen your knees",
+        "Extend your arms forward and rest your forehead down",
+        "Allow your body to completely relax",
+        "Breathe deeply and let go of tension",
+        "Stay here as long as feels comfortable",
+        "Use this pose to rest and restore energy"
+      ];
+      const randomTip = childTips[Math.floor(Math.random() * childTips.length)];
+      instructions.push(randomTip);
+    }
+    else if (selectedExercise?.id === 'cobra-pose') {
+      const cobraTips = [
+        "Lie on your belly with palms under your shoulders",
+        "Press your pubic bone into the ground",
+        "Slowly lift your chest using your back muscles",
+        "Keep your elbows close to your body",
+        "Only lift as high as feels comfortable",
+        "Breathe steadily and avoid straining your neck",
+        "Keep your shoulders away from your ears"
+      ];
+      const randomTip = cobraTips[Math.floor(Math.random() * cobraTips.length)];
+      instructions.push(randomTip);
+    }
+    else if (selectedExercise?.id === 'triangle-pose') {
+      const triangleTips = [
+        "Stand with your feet wide apart",
+        "Turn your front foot out 90 degrees",
+        "Reach forward and then down to your shin or floor",
+        "Extend your top arm toward the ceiling",
+        "Keep both sides of your torso equally long",
+        "Breathe deeply and hold the stretch",
+        "Keep your front thigh engaged and strong"
+      ];
+      const randomTip = triangleTips[Math.floor(Math.random() * triangleTips.length)];
+      instructions.push(randomTip);
+    }
+    else if (selectedExercise?.id === 'warrior-pose') {
       const warriorTips = [
         "Step your back foot 3 to 4 feet behind you",
         "Turn your back foot out 45 degrees",
@@ -112,7 +206,6 @@ export default function GymAPIPage() {
       const randomTip = warriorTips[Math.floor(Math.random() * warriorTips.length)];
       instructions.push(randomTip);
     }
-    
     else if (selectedExercise?.id === 'tree-pose') {
       const treeTips = [
         "Press your standing foot firmly into the ground",
@@ -197,7 +290,7 @@ export default function GymAPIPage() {
     // General posture reminders
     if (instructions.length === 0) {
       let motivational;
-      if (selectedExercise?.id === 'warrior-pose' || selectedExercise?.id === 'tree-pose') {
+      if (isYogaPose(selectedExercise?.id)) {
         motivational = [
           "Breathe deeply and find your center",
           "Stay present and focused on your pose", 
@@ -437,9 +530,6 @@ export default function GymAPIPage() {
         }
 
         // PROPER squat and rep counting logic
-        let squatPhase = 'standing'; // 'standing', 'descending', 'bottom', 'ascending'
-        let repCount = 0;
-        let lastPhaseChange = 0;
         
         function analyzeSquatForm(angles) {
           const { leftKnee, rightKnee, leftHip, rightHip, avgKnee } = angles;
@@ -455,99 +545,186 @@ export default function GymAPIPage() {
           } else if (rightKnee) {
             kneeAngle = rightKnee;
           } else {
-            return { score: 0, feedback: "Position legs in camera view", phase: squatPhase, reps: repCount };
+            return { score: 0, feedback: "Position legs in camera view", phase: squatState, reps: repCount };
           }
 
-          console.log(`🔍 Squat Analysis - Knee: ${kneeAngle.toFixed(0)}°, Phase: ${squatPhase}`);
+          console.log(`🔍 Squat Analysis - Knee: ${kneeAngle.toFixed(0)}°, State: ${squatState}`);
           
-            const currentTime = Date.now();
-          const timeSinceLastChange = currentTime - lastPhaseChange;          // State machine for squat phases with hysteresis
-          if (squatPhase === 'standing') {
-            // Start squat when knees begin to bend significantly
-            if (kneeAngle < 160 && timeSinceLastChange > 500) {
-              squatPhase = 'descending';
-              lastPhaseChange = currentTime;
-              return { score: 60, feedback: "Good, keep going down", phase: squatPhase, reps: repCount };
+          // Simplified binary state machine based on reference implementations
+          if (squatState === 'up') {
+            // Transition to 'down' when knee angle drops below threshold
+            if (kneeAngle < 140) {
+              setSquatState('down');
+              return { score: 70, feedback: "Good squat depth - keep going down", phase: 'down', reps: squatRepCount };
             }
-            // Provide feedback while standing
-            return { score: 30, feedback: "Ready to squat - bend your knees to begin", phase: squatPhase, reps: repCount };
-          }
-          
-          else if (squatPhase === 'descending') {
-            // Reached bottom position
-            if (kneeAngle < 120) {
-              squatPhase = 'bottom';
-              lastPhaseChange = currentTime;
-              const depth = 180 - kneeAngle;
-              let score = 50;
-              let feedback = "Good depth!";
-              
-              if (depth > 80) { // Very deep squat
-                score = 95;
-                feedback = "Excellent squat depth!";
-              } else if (depth > 60) { // Good squat
-                score = 85;
-                feedback = "Perfect squat form!";
-              } else if (depth > 40) { // Okay squat
-                score = 70;
-                feedback = "Good, try to go deeper";
-              }
-              
-              return { score, feedback, phase: squatPhase, reps: repCount };
-            }
-            // Provide continuous feedback while descending
-            if (kneeAngle > 140) {
-              return { score: 50, feedback: "Keep going down - squat deeper", phase: squatPhase, reps: repCount };
-            } else {
-              return { score: 70, feedback: "Good depth - keep going", phase: squatPhase, reps: repCount };
-            }
-          }
-          
-          else if (squatPhase === 'bottom') {
-            // Start ascending when knees extend
-            if (kneeAngle > 130 && timeSinceLastChange > 300) {
-              squatPhase = 'ascending';
-              lastPhaseChange = currentTime;
-              return { score: 75, feedback: "Good, push up!", phase: squatPhase, reps: repCount };
-            }
-            // Provide feedback while at bottom
-            return { score: 80, feedback: "Hold the position - now drive up", phase: squatPhase, reps: repCount };
-          }
-          
-          else if (squatPhase === 'ascending') {
-            // Complete rep when back to standing
-            if (kneeAngle > 160 && timeSinceLastChange > 500) {
-              squatPhase = 'standing';
-              repCount++;
-              lastPhaseChange = currentTime;
+            // Provide feedback while in up position
+            return { score: 50, feedback: "Ready to squat - bend your knees", phase: squatState, reps: squatRepCount };
+          } 
+          else { // squatState === 'down'
+            // Complete rep and transition to 'up' when knee angle rises above threshold
+            if (kneeAngle > 160) {
+              const newRepCount = squatRepCount + 1;
+              setSquatState('up');
+              setSquatRepCount(newRepCount);
               
               // Add motivational feedback based on rep count
-              let repFeedback = `Rep ${repCount} completed! 🎉`;
-              if (repCount === 1) {
+              let repFeedback = `Rep ${newRepCount} completed! 🎉`;
+              if (newRepCount === 1) {
                 repFeedback = "First rep done! Great start! 💪";
-              } else if (repCount === 5) {
+              } else if (newRepCount === 5) {
                 repFeedback = "5 reps! You're doing amazing! 🔥";
-              } else if (repCount === 10) {
+              } else if (newRepCount === 10) {
                 repFeedback = "10 reps! Outstanding! Keep it up! ⚡";
-              } else if (repCount % 5 === 0) {
-                repFeedback = `${repCount} reps! Fantastic work! 🚀`;
+              } else if (newRepCount % 5 === 0) {
+                repFeedback = `${newRepCount} reps! Fantastic work! 🚀`;
               }
               
-              return { score: 90, feedback: repFeedback, phase: squatPhase, reps: repCount, justCompleted: true };
+              return { score: 90, feedback: repFeedback, phase: 'up', reps: newRepCount, justCompleted: true };
             }
-            // Provide continuous feedback while ascending
-            if (kneeAngle < 140) {
-              return { score: 60, feedback: "Push up stronger - drive through your heels", phase: squatPhase, reps: repCount };
+            
+            // Provide feedback while in down position
+            const depth = 180 - kneeAngle;
+            if (kneeAngle < 120) {
+              let score = 85;
+              let feedback = "Perfect squat depth!";
+              
+              if (depth > 80) {
+                score = 95;
+                feedback = "Excellent deep squat!";
+              }
+              
+              return { score, feedback, phase: squatState, reps: squatRepCount };
             } else {
-              return { score: 75, feedback: "Almost up - complete the movement", phase: squatPhase, reps: repCount };
+              return { score: 60, feedback: "Go deeper - then drive up", phase: squatState, reps: squatRepCount };
             }
           }
           
           // Default state feedback
           if (kneeAngle > 170) {
-            return { score: 20, feedback: "Stand ready, then squat down", phase: squatPhase, reps: repCount };
+            return { score: 20, feedback: "Stand ready, then squat down", phase: squatState, reps: repCount };
           } else {
-            return { score: 0, feedback: "Position legs in camera view", phase: squatPhase, reps: repCount };
+            return { score: 0, feedback: "Position legs in camera view", phase: squatState, reps: repCount };
+          }
+        }
+
+        // Jumping Jacks Analysis - Simple position-based detection
+        function analyzeJumpingJackForm(landmarks) {
+          if (!landmarks || landmarks.length < 33) {
+            return { score: 0, feedback: "Position yourself in camera view", phase: jackState, reps: jackRepCount };
+          }
+          
+          const leftWrist = landmarks[15];
+          const rightWrist = landmarks[16];
+          const leftAnkle = landmarks[27];
+          const rightAnkle = landmarks[28];
+          const leftShoulder = landmarks[11];
+          const rightShoulder = landmarks[12];
+          
+          if (!leftWrist || !rightWrist || !leftAnkle || !rightAnkle || !leftShoulder || !rightShoulder) {
+            return { score: 0, feedback: "Move fully into camera view", phase: jackState, reps: jackCount };
+          }
+          
+          // Calculate distances for arms and legs
+          const armDistance = Math.abs(leftWrist.x - rightWrist.x);
+          const legDistance = Math.abs(leftAnkle.x - rightAnkle.x);
+          const armHeight = Math.min(leftWrist.y, rightWrist.y);
+          const shoulderHeight = Math.min(leftShoulder.y, rightShoulder.y);
+          
+          // Determine if arms are up (wrists above shoulders) and legs are apart
+          const armsUp = armHeight < shoulderHeight - 0.1; // Arms raised above shoulders
+          const legsApart = legDistance > 0.3; // Legs spread apart
+          
+          console.log(`🔍 Jumping Jack Analysis - Arms Up: ${armsUp}, Legs Apart: ${legsApart}, State: ${jackState}`);
+          
+          // Simple binary state machine
+          if (jackState === 'together') {
+            // Transition to 'apart' when both arms up and legs apart
+            if (armsUp && legsApart) {
+              setJackState('apart');
+              return { score: 80, feedback: "Good jump! Now bring arms and legs together", phase: 'apart', reps: jackRepCount };
+            }
+            return { score: 50, feedback: "Jump up - raise arms and spread legs!", phase: jackState, reps: jackRepCount };
+          } 
+          else { // jackState === 'apart'
+            // Complete rep when arms down and legs together
+            if (!armsUp && !legsApart) {
+              const newRepCount = jackRepCount + 1;
+              setJackState('together');
+              setJackRepCount(newRepCount);
+              
+              let repFeedback = `Jumping Jack ${newRepCount} completed! 🎉`;
+              if (newRepCount === 1) {
+                repFeedback = "First jumping jack! Keep it up! 💪";
+              } else if (newRepCount === 10) {
+                repFeedback = "10 jumping jacks! Great cardio! 🔥";
+              } else if (newRepCount === 20) {
+                repFeedback = "20 jumping jacks! Excellent stamina! ⚡";
+              }
+              
+              return { score: 95, feedback: repFeedback, phase: 'together', reps: newRepCount, justCompleted: true };
+            }
+            return { score: 75, feedback: "Bring arms down and legs together", phase: jackState, reps: jackRepCount };
+          }
+        }
+
+        // Push-up Analysis - Simple elbow angle detection
+        function analyzePushupForm(landmarks) {
+          if (!landmarks || landmarks.length < 33) {
+            return { score: 0, feedback: "Position yourself in camera view", phase: pushupState, reps: pushupRepCount };
+          }
+          
+          const leftShoulder = landmarks[11];
+          const leftElbow = landmarks[13];
+          const leftWrist = landmarks[15];
+          const rightShoulder = landmarks[12];
+          const rightElbow = landmarks[14];
+          const rightWrist = landmarks[16];
+          
+          if (!leftShoulder || !leftElbow || !leftWrist || !rightShoulder || !rightElbow || !rightWrist) {
+            return { score: 0, feedback: "Position arms in camera view", phase: pushupState, reps: pushupRepCount };
+          }
+          
+          // Calculate elbow angles (based on reference implementation)
+          const leftElbowAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
+          const rightElbowAngle = calculateAngle(rightShoulder, rightElbow, rightWrist);
+          const avgElbowAngle = (leftElbowAngle + rightElbowAngle) / 2;
+          
+          console.log(`🔍 Push-up Analysis - Elbow: ${avgElbowAngle.toFixed(0)}°, State: ${pushupState}`);
+          
+          // Simple binary state machine similar to reference
+          if (pushupState === 'up') {
+            // Transition to 'down' when elbow angle decreases (arms bend)
+            if (avgElbowAngle < 90) {
+              setPushupState('down');
+              return { score: 70, feedback: "Good descent - now push back up", phase: 'down', reps: pushupRepCount };
+            }
+            return { score: 50, feedback: "Lower down - bend your elbows", phase: pushupState, reps: pushupRepCount };
+          } 
+          else { // pushupState === 'down'
+            // Complete rep when elbow angle increases (arms extend)
+            if (avgElbowAngle > 160) {
+              const newRepCount = pushupRepCount + 1;
+              setPushupState('up');
+              setPushupRepCount(newRepCount);
+              
+              let repFeedback = `Push-up ${newRepCount} completed! 💪`;
+              if (newRepCount === 1) {
+                repFeedback = "First push-up! Great start! 🔥";
+              } else if (newRepCount === 5) {
+                repFeedback = "5 push-ups! Strong work! ⚡";
+              } else if (newRepCount === 10) {
+                repFeedback = "10 push-ups! Excellent strength! 🚀";
+              }
+              
+              return { score: 90, feedback: repFeedback, phase: 'up', reps: newRepCount, justCompleted: true };
+            }
+            
+            // Provide feedback based on current position
+            if (avgElbowAngle < 60) {
+              return { score: 85, feedback: "Perfect depth - now push up!", phase: pushupState, reps: pushupRepCount };
+            } else {
+              return { score: 60, feedback: "Push back up - extend your arms", phase: pushupState, reps: pushupRepCount };
+            }
           }
         }
 
@@ -582,55 +759,86 @@ export default function GymAPIPage() {
           const rightAnkle = lm[28];
           const leftShoulder = lm[11];
           const rightShoulder = lm[12];
+          const leftElbow = lm[13];
+          const rightElbow = lm[14];
           const leftWrist = lm[15];
           const rightWrist = lm[16];
+          const nose = lm[0];
 
           let score = 0;
           let feedback = [];
 
-          // Check foot positioning (wide stance)
+          // Enhanced foot positioning analysis
           const ankleDistance = Math.abs(leftAnkle.x - rightAnkle.x);
-          if (ankleDistance > 0.2) {
-            score += 25;
-            feedback.push("Good wide stance");
+          if (ankleDistance > 0.25) {
+            score += 20;
+            feedback.push("Perfect wide warrior stance");
+          } else if (ankleDistance > 0.15) {
+            score += 15;
+            feedback.push("Good stance - step a bit wider");
           } else {
             feedback.push("Step your back foot further apart for a wider stance");
           }
 
-          // Check front knee bend (should be bent, back leg straight)
+          // Enhanced front knee analysis
           const frontKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
           const backKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
           
-          if (frontKneeAngle < 120) {
+          if (frontKneeAngle >= 85 && frontKneeAngle <= 95) {
             score += 25;
-            feedback.push("Front knee well bent");
+            feedback.push("Perfect 90-degree front knee");
+          } else if (frontKneeAngle < 120) {
+            score += 20;
+            feedback.push("Good knee bend - aim for 90 degrees");
           } else {
-            feedback.push("Bend your front knee more, aim for 90 degrees");
+            feedback.push("Bend your front knee deeper toward 90 degrees");
           }
 
-          if (backKneeAngle > 160) {
+          // Enhanced back leg analysis
+          if (backKneeAngle > 170) {
             score += 25;
-            feedback.push("Back leg straight - excellent");
+            feedback.push("Back leg powerfully straight");
+          } else if (backKneeAngle > 160) {
+            score += 20;
+            feedback.push("Good back leg - straighten completely");
           } else {
-            feedback.push("Straighten your back leg completely");
+            feedback.push("Engage and straighten your back leg");
           }
 
-          // Check arms raised overhead
+          // Enhanced arm positioning analysis
           const averageArmHeight = (leftWrist.y + rightWrist.y) / 2;
           const shoulderHeight = (leftShoulder.y + rightShoulder.y) / 2;
+          const armDistance = Math.abs(leftWrist.x - rightWrist.x);
           
-          if (averageArmHeight < shoulderHeight - 0.1) {
+          if (averageArmHeight < shoulderHeight - 0.15 && armDistance < 0.3) {
             score += 25;
-            feedback.push("Arms raised beautifully");
+            feedback.push("Arms reaching toward the sky magnificently");
+          } else if (averageArmHeight < shoulderHeight - 0.1) {
+            score += 20;
+            feedback.push("Good arm raise - bring them closer together");
           } else {
             feedback.push("Raise your arms high overhead and reach for the sky");
+          }
+
+          // Check spine alignment and posture
+          const spineAlignment = Math.abs(nose.x - ((leftHip.x + rightHip.x) / 2));
+          if (spineAlignment < 0.05) {
+            score += 5;
+            feedback.push("Beautiful centered posture");
+          }
+
+          // Hip alignment check
+          const hipAlignment = Math.abs(leftHip.y - rightHip.y);
+          if (hipAlignment < 0.03) {
+            score += 5;
+            feedback.push("Hips perfectly level");
           }
 
           return { 
             score, 
             feedback: feedback.join(" • "), 
             phase: 'holding', 
-            reps: score > 75 ? 1 : 0 
+            reps: score > 80 ? 1 : 0 
           };
         }
 
@@ -650,34 +858,43 @@ export default function GymAPIPage() {
           const rightAnkle = lm[28];
           const leftShoulder = lm[11];
           const rightShoulder = lm[12];
+          const leftElbow = lm[13];
+          const rightElbow = lm[14];
           const leftWrist = lm[15];
           const rightWrist = lm[16];
+          const nose = lm[0];
 
           let score = 0;
           let feedback = [];
 
-          // Check single leg balance (one foot should be raised)
+          // Enhanced single leg balance analysis
           const leftFootHeight = leftAnkle.y;
           const rightFootHeight = rightAnkle.y;
           const footHeightDiff = Math.abs(leftFootHeight - rightFootHeight);
           
-          if (footHeightDiff > 0.1) {
+          if (footHeightDiff > 0.15) {
             score += 30;
-            feedback.push("Good balance on one leg");
-          } else {
-            feedback.push("Lift one foot up and place it on your inner thigh");
-          }
-
-          // Check hip alignment (should be level)
-          const hipLevel = Math.abs(leftHip.y - rightHip.y);
-          if (hipLevel < 0.05) {
+            feedback.push("Excellent single-leg balance");
+          } else if (footHeightDiff > 0.08) {
             score += 25;
-            feedback.push("Hips level and strong");
+            feedback.push("Good balance - lift foot higher on thigh");
           } else {
-            feedback.push("Keep your hips level and square to the front");
+            feedback.push("Lift one foot and place it on inner thigh, not the knee");
           }
 
-          // Check hands position (prayer position at chest)
+          // Enhanced hip alignment analysis  
+          const hipLevel = Math.abs(leftHip.y - rightHip.y);
+          if (hipLevel < 0.03) {
+            score += 25;
+            feedback.push("Hips perfectly level and square");
+          } else if (hipLevel < 0.06) {
+            score += 20;
+            feedback.push("Good hip alignment - keep them level");
+          } else {
+            feedback.push("Level your hips and keep them square to front");
+          }
+
+          // Enhanced hand position analysis
           const handsDistance = Math.sqrt(
             Math.pow(leftWrist.x - rightWrist.x, 2) + 
             Math.pow(leftWrist.y - rightWrist.y, 2)
@@ -686,21 +903,351 @@ export default function GymAPIPage() {
           const handsAtChest = (leftWrist.y + rightWrist.y) / 2;
           const chestLevel = (leftShoulder.y + rightShoulder.y) / 2;
           
-          if (handsDistance < 0.1 && Math.abs(handsAtChest - chestLevel) < 0.1) {
+          if (handsDistance < 0.08 && Math.abs(handsAtChest - chestLevel) < 0.08) {
             score += 25;
-            feedback.push("Beautiful prayer hands");
+            feedback.push("Perfect prayer position at heart center");
+          } else if (handsDistance < 0.12) {
+            score += 20;
+            feedback.push("Good hand position - bring palms closer");
           } else {
             feedback.push("Bring palms together at your heart center");
           }
 
-          // Check stability (minimal swaying)
-          score += 20; // Base stability score
+          // Check spine alignment (straight standing posture)
+          const spineAlignment = Math.abs(nose.x - ((leftShoulder.x + rightShoulder.x) / 2));
+          if (spineAlignment < 0.04) {
+            score += 10;
+            feedback.push("Beautiful tall spine");
+          }
+
+          // Check shoulder alignment
+          const shoulderLevel = Math.abs(leftShoulder.y - rightShoulder.y);
+          if (shoulderLevel < 0.03) {
+            score += 10;
+            feedback.push("Shoulders relaxed and level");
+          }
+
+          // Enhanced stability scoring based on overall form
+          if (score >= 75) {
+            feedback.push("Rooted like a strong tree - hold with breath");
+          } else if (score >= 60) {
+            feedback.push("Finding your balance - keep breathing");
+          }
 
           return { 
             score, 
             feedback: feedback.join(" • "), 
             phase: 'balancing', 
+            reps: score > 75 ? 1 : 0 
+          };
+        }
+
+        function analyzeMountainPose(landmarks) {
+          if (!landmarks || landmarks.length < 33) {
+            return { score: 0, feedback: "Position yourself in camera view", phase: 'setup', reps: 0 };
+          }
+
+          const lm = landmarks;
+          let score = 0;
+          const feedback = [];
+
+          // Check spine alignment
+          const leftShoulder = lm[11];
+          const rightShoulder = lm[12];
+          const leftHip = lm[23];
+          const rightHip = lm[24];
+
+          // Shoulders should be level
+          const shoulderAlignment = Math.abs(leftShoulder.y - rightShoulder.y);
+          if (shoulderAlignment < 0.05) {
+            score += 25;
+            feedback.push("Perfect shoulder alignment");
+          } else {
+            feedback.push("Level your shoulders");
+          }
+
+          // Hips should be level
+          const hipAlignment = Math.abs(leftHip.y - rightHip.y);
+          if (hipAlignment < 0.05) {
+            score += 25;
+            feedback.push("Great hip alignment");
+          } else {
+            feedback.push("Balance your hips");
+          }
+
+          // Check feet positioning
+          const leftAnkle = lm[27];
+          const rightAnkle = lm[28];
+          const feetDistance = Math.abs(leftAnkle.x - rightAnkle.x);
+          if (feetDistance > 0.1 && feetDistance < 0.2) {
+            score += 25;
+            feedback.push("Good feet positioning");
+          } else {
+            feedback.push("Place feet hip-width apart");
+          }
+
+          // Check arm positioning (should be at sides)
+          const leftElbow = lm[13];
+          const rightElbow = lm[14];
+          const armPosition = (leftElbow.x < leftShoulder.x) && (rightElbow.x > rightShoulder.x);
+          if (armPosition) {
+            score += 25;
+            feedback.push("Arms perfectly at your sides");
+          } else {
+            feedback.push("Let your arms rest naturally at your sides");
+          }
+
+          return { 
+            score, 
+            feedback: feedback.join(" • "), 
+            phase: 'holding', 
             reps: score > 70 ? 1 : 0 
+          };
+        }
+
+        function analyzeDownwardDog(landmarks) {
+          if (!landmarks || landmarks.length < 33) {
+            return { score: 0, feedback: "Position yourself in camera view", phase: 'setup', reps: 0 };
+          }
+
+          const lm = landmarks;
+          let score = 0;
+          const feedback = [];
+
+          // Check inverted V shape
+          const leftWrist = lm[15];
+          const rightWrist = lm[16];
+          const leftHip = lm[23];
+          const rightHip = lm[24];
+          const leftAnkle = lm[27];
+          const rightAnkle = lm[28];
+
+          // Hips should be highest point
+          const avgHipY = (leftHip.y + rightHip.y) / 2;
+          const avgWristY = (leftWrist.y + rightWrist.y) / 2;
+          const avgAnkleY = (leftAnkle.y + rightAnkle.y) / 2;
+
+          if (avgHipY < avgWristY && avgHipY < avgAnkleY) {
+            score += 30;
+            feedback.push("Perfect inverted V shape");
+          } else {
+            feedback.push("Lift your hips higher");
+          }
+
+          // Check arm straightness
+          const leftShoulder = lm[11];
+          const rightShoulder = lm[12];
+          const leftElbow = lm[13];
+          const rightElbow = lm[14];
+
+          const leftArmAngle = calculateAngle(leftWrist, leftElbow, leftShoulder);
+          const rightArmAngle = calculateAngle(rightWrist, rightElbow, rightShoulder);
+
+          if (leftArmAngle > 160 && rightArmAngle > 160) {
+            score += 25;
+            feedback.push("Arms are beautifully straight");
+          } else {
+            feedback.push("Straighten your arms");
+          }
+
+          // Check leg position
+          const leftKnee = lm[25];
+          const rightKnee = lm[26];
+          
+          const leftLegAngle = calculateAngle(leftAnkle, leftKnee, leftHip);
+          const rightLegAngle = calculateAngle(rightAnkle, rightKnee, rightHip);
+
+          if (leftLegAngle > 150 && rightLegAngle > 150) {
+            score += 25;
+            feedback.push("Legs are well extended");
+          } else {
+            feedback.push("Try to straighten your legs");
+          }
+
+          // Base stability score
+          score += 20;
+
+          return { 
+            score, 
+            feedback: feedback.join(" • "), 
+            phase: 'holding', 
+            reps: score > 75 ? 1 : 0 
+          };
+        }
+
+        function analyzeChildPose(landmarks) {
+          if (!landmarks || landmarks.length < 33) {
+            return { score: 0, feedback: "Position yourself in camera view", phase: 'setup', reps: 0 };
+          }
+
+          const lm = landmarks;
+          let score = 0;
+          const feedback = [];
+
+          // Check if person is low to ground (kneeling position)
+          const leftHip = lm[23];
+          const rightHip = lm[24];
+          const leftKnee = lm[25];
+          const rightKnee = lm[26];
+          const nose = lm[0];
+
+          // Hips should be close to heels
+          const avgHipY = (leftHip.y + rightHip.y) / 2;
+          const avgKneeY = (leftKnee.y + rightKnee.y) / 2;
+
+          if (avgHipY > avgKneeY - 0.1) {
+            score += 30;
+            feedback.push("Great sitting position");
+          } else {
+            feedback.push("Sit back on your heels");
+          }
+
+          // Forehead should be low (near ground level)
+          if (nose.y > avgHipY + 0.2) {
+            score += 25;
+            feedback.push("Perfect forward fold");
+          } else {
+            feedback.push("Lower your forehead toward the ground");
+          }
+
+          // Arms should be extended forward
+          const leftWrist = lm[15];
+          const rightWrist = lm[16];
+          const leftShoulder = lm[11];
+          const rightShoulder = lm[12];
+
+          const armsExtended = (leftWrist.y > leftShoulder.y) && (rightWrist.y > rightShoulder.y);
+          if (armsExtended) {
+            score += 25;
+            feedback.push("Arms beautifully extended");
+          } else {
+            feedback.push("Extend your arms forward");
+          }
+
+          // Relaxation bonus
+          score += 20;
+
+          return { 
+            score, 
+            feedback: feedback.join(" • "), 
+            phase: 'relaxing', 
+            reps: score > 70 ? 1 : 0 
+          };
+        }
+
+        function analyzeCobraPose(landmarks) {
+          if (!landmarks || landmarks.length < 33) {
+            return { score: 0, feedback: "Position yourself in camera view", phase: 'setup', reps: 0 };
+          }
+
+          const lm = landmarks;
+          let score = 0;
+          const feedback = [];
+
+          // Check chest lift
+          const leftShoulder = lm[11];
+          const rightShoulder = lm[12];
+          const leftHip = lm[23];
+          const rightHip = lm[24];
+          const nose = lm[0];
+
+          // Shoulders should be higher than hips
+          const avgShoulderY = (leftShoulder.y + rightShoulder.y) / 2;
+          const avgHipY = (leftHip.y + rightHip.y) / 2;
+
+          if (avgShoulderY < avgHipY - 0.1) {
+            score += 30;
+            feedback.push("Excellent chest lift");
+          } else {
+            feedback.push("Lift your chest higher");
+          }
+
+          // Check arm positioning
+          const leftElbow = lm[13];
+          const rightElbow = lm[14];
+          const leftWrist = lm[15];
+          const rightWrist = lm[16];
+
+          // Elbows should be close to body
+          const elbowSpread = Math.abs(leftElbow.x - rightElbow.x);
+          if (elbowSpread < 0.3) {
+            score += 25;
+            feedback.push("Good elbow positioning");
+          } else {
+            feedback.push("Keep elbows close to your body");
+          }
+
+          // Head should be in neutral position
+          if (nose.y < avgShoulderY) {
+            score += 25;
+            feedback.push("Perfect head alignment");
+          } else {
+            feedback.push("Lift your head gently");
+          }
+
+          // Base form score
+          score += 20;
+
+          return { 
+            score, 
+            feedback: feedback.join(" • "), 
+            phase: 'backbending', 
+            reps: score > 70 ? 1 : 0 
+          };
+        }
+
+        function analyzeTrianglePose(landmarks) {
+          if (!landmarks || landmarks.length < 33) {
+            return { score: 0, feedback: "Position yourself in camera view", phase: 'setup', reps: 0 };
+          }
+
+          const lm = landmarks;
+          let score = 0;
+          const feedback = [];
+
+          // Check wide leg stance
+          const leftAnkle = lm[27];
+          const rightAnkle = lm[28];
+          const feetDistance = Math.abs(leftAnkle.x - rightAnkle.x);
+
+          if (feetDistance > 0.3) {
+            score += 25;
+            feedback.push("Good wide stance");
+          } else {
+            feedback.push("Step your feet wider apart");
+          }
+
+          // Check lateral bend
+          const leftShoulder = lm[11];
+          const rightShoulder = lm[12];
+          const leftWrist = lm[15];
+          const rightWrist = lm[16];
+
+          const shoulderTilt = Math.abs(leftShoulder.y - rightShoulder.y);
+          if (shoulderTilt > 0.1) {
+            score += 30;
+            feedback.push("Beautiful side stretch");
+          } else {
+            feedback.push("Reach further to the side");
+          }
+
+          // Check arm extension (one up, one down)
+          const armExtension = Math.abs(leftWrist.y - rightWrist.y);
+          if (armExtension > 0.3) {
+            score += 25;
+            feedback.push("Perfect arm positioning");
+          } else {
+            feedback.push("Extend one arm up, one arm down");
+          }
+
+          // Stability bonus
+          score += 20;
+
+          return { 
+            score, 
+            feedback: feedback.join(" • "), 
+            phase: 'stretching', 
+            reps: score > 75 ? 1 : 0 
           };
         }
 
@@ -833,10 +1380,24 @@ export default function GymAPIPage() {
 
             // ENHANCED analysis based on selected exercise
             let analysis;
-            if (selectedExercise?.id === 'warrior-pose') {
+            if (selectedExercise?.id === 'mountain-pose') {
+              analysis = analyzeMountainPose(lm);
+            } else if (selectedExercise?.id === 'downward-dog') {
+              analysis = analyzeDownwardDog(lm);
+            } else if (selectedExercise?.id === 'child-pose') {
+              analysis = analyzeChildPose(lm);
+            } else if (selectedExercise?.id === 'cobra-pose') {
+              analysis = analyzeCobraPose(lm);
+            } else if (selectedExercise?.id === 'triangle-pose') {
+              analysis = analyzeTrianglePose(lm);
+            } else if (selectedExercise?.id === 'warrior-pose') {
               analysis = analyzeWarriorPose(lm);
             } else if (selectedExercise?.id === 'tree-pose') {
               analysis = analyzeTreePose(lm);
+            } else if (selectedExercise?.id === 'jumping-jacks') {
+              analysis = analyzeJumpingJackForm(lm);
+            } else if (selectedExercise?.id === 'pushup') {
+              analysis = analyzePushupForm(lm);
             } else {
               // Default to squat analysis
               analysis = analyzeSquatForm(smoothedAngles);
@@ -848,16 +1409,50 @@ export default function GymAPIPage() {
             // Only update UI if we have sufficient confidence AND not in demo mode
             if (overallConfidence > 0.6 && !isDemoMode) {
               setPoseScore(analysis.score);
-              setPushupCount(analysis.reps);
+              
+              // Handle Hold Timer for Yoga Poses vs Reps for Traditional Exercises
+              if (isYogaPose(selectedExercise?.id)) {
+                // Yoga pose hold timer logic
+                const currentTime = Date.now();
+                const goodFormThreshold = 75; // Score needed for good hold
+                
+                if (analysis.score >= goodFormThreshold) {
+                  if (!isGoodFormHold) {
+                    // Starting a good form hold
+                    setIsGoodFormHold(true);
+                    setHoldStartTime(currentTime);
+                    setHoldTimer(0);
+                  } else {
+                    // Continue holding - update timer
+                    const holdDuration = Math.floor((currentTime - holdStartTime) / 1000);
+                    setHoldTimer(holdDuration);
+                  }
+                  setPushupCount(holdTimer); // Display hold time instead of reps
+                } else {
+                  // Poor form - reset hold timer
+                  if (isGoodFormHold) {
+                    setIsGoodFormHold(false);
+                    setHoldStartTime(null);
+                  }
+                  setPushupCount(0);
+                }
+              } else {
+                // Traditional exercise - use reps
+                setPushupCount(analysis.reps);
+              }
               
               let currentFeedback;
-              if (selectedExercise?.id === 'warrior-pose' || selectedExercise?.id === 'tree-pose') {
-                // Yoga pose feedback
+              if (isYogaPose(selectedExercise?.id)) {
+                // Yoga pose feedback with hold timer
+                const holdStatus = isGoodFormHold 
+                  ? `Holding for ${holdTimer}s - Great form! 🧘‍♀️`
+                  : 'Adjust your pose to start hold timer ⏱️';
+                  
                 currentFeedback = [
                   `🧘 ${selectedExercise.name}: ${analysis.feedback}`,
                   `Score: ${analysis.score}/100`,
                   `Phase: ${analysis.phase.toUpperCase()}`,
-                  `Hold: ${analysis.reps > 0 ? 'Excellent pose!' : 'Keep adjusting'}`,
+                  holdStatus,
                   ...smartFeedback
                 ];
               } else {
@@ -892,7 +1487,7 @@ export default function GymAPIPage() {
                 // Prioritize detailed form coaching instructions
                 else {
                   // For yoga poses, provide specific corrective audio feedback
-                  if (selectedExercise?.id === 'warrior-pose' || selectedExercise?.id === 'tree-pose') {
+                  if (isYogaPose(selectedExercise?.id)) {
                     // Parse the feedback string to get individual corrections
                     if (analysis.feedback) {
                       const corrections = analysis.feedback.split(' • ');
@@ -1144,6 +1739,46 @@ export default function GymAPIPage() {
       // Always include yoga poses first
       const yogaPoses = [
         {
+          id: 'mountain-pose',
+          name: 'Mountain Pose',
+          bodyPart: 'full body',
+          equipment: 'body weight',
+          target: 'posture & alignment',
+          instructions: ['Stand tall with feet hip-width apart', 'Arms at sides, palms facing forward', 'Engage core and lengthen spine', 'Breathe deeply', 'Hold for 1 minute']
+        },
+        {
+          id: 'downward-dog',
+          name: 'Downward Facing Dog',
+          bodyPart: 'full body',
+          equipment: 'body weight',
+          target: 'strength & flexibility',
+          instructions: ['Start on hands and knees', 'Tuck toes under', 'Lift hips up and back', 'Straighten legs', 'Hold for 30-60 seconds']
+        },
+        {
+          id: 'child-pose',
+          name: 'Child\'s Pose',
+          bodyPart: 'full body',
+          equipment: 'body weight',
+          target: 'relaxation & flexibility',
+          instructions: ['Kneel on mat', 'Sit back on heels', 'Extend arms forward', 'Rest forehead on ground', 'Hold for 1-2 minutes']
+        },
+        {
+          id: 'cobra-pose',
+          name: 'Cobra Pose',
+          bodyPart: 'back',
+          equipment: 'body weight',
+          target: 'back strength & flexibility',
+          instructions: ['Lie face down', 'Place palms under shoulders', 'Press chest up', 'Keep hips on ground', 'Hold for 15-30 seconds']
+        },
+        {
+          id: 'triangle-pose',
+          name: 'Triangle Pose',
+          bodyPart: 'full body',
+          equipment: 'body weight',
+          target: 'side body stretch',
+          instructions: ['Stand with feet wide', 'Turn right foot out 90 degrees', 'Reach right hand to floor', 'Extend left arm up', 'Hold for 30 seconds each side']
+        },
+        {
           id: 'warrior-pose',
           name: 'Warrior I Pose',
           bodyPart: 'full body',
@@ -1361,7 +1996,7 @@ return (
     </div>
 
     {/* Main Layout */}
-    <div className="flex h-[calc(100vh-80px)] overflow-hidden">
+    <div className="flex flex-col lg:flex-row h-[calc(100vh-80px)] overflow-hidden">
       {/* Main Camera View */}
       <div className="flex-1 relative bg-black overflow-hidden">
         <Webcam
@@ -1444,23 +2079,23 @@ return (
         )}
       </div>
 
-      {/* Sidebar - Redesigned for better UX */}
-      <div className="w-80 bg-gradient-to-b from-gray-900 to-gray-800 border-l border-gray-700 flex-shrink-0 overflow-y-auto sidebar-scroll">
+      {/* Sidebar - Mobile Responsive */}
+      <div className="w-full lg:w-80 bg-gradient-to-b from-gray-900 to-gray-800 border-t lg:border-t-0 lg:border-l border-gray-700 flex-shrink-0 overflow-y-auto sidebar-scroll max-h-60 lg:max-h-none">
         {/* Live Feedback Section */}
-        <div className="p-4 border-b border-gray-700/50">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="p-3 lg:p-4 border-b border-gray-700/50">
+          <div className="flex items-center gap-2 mb-3 lg:mb-4">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-            <h3 className="text-lg font-bold text-white">Live Feedback</h3>
+            <h3 className="text-base lg:text-lg font-bold text-white">Live Feedback</h3>
           </div>
 
           {/* Selected Exercise Display */}
           {selectedExercise && (
-            <div className="mb-4 p-3 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 rounded-lg">
-              <div className="flex items-center gap-2 mb-2">
+            <div className="mb-3 lg:mb-4 p-2 lg:p-3 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 rounded-lg">
+              <div className="flex items-center gap-2 mb-1 lg:mb-2">
                 <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                <span className="text-sm text-purple-300 font-medium">Active Exercise</span>
+                <span className="text-xs lg:text-sm text-purple-300 font-medium">Active Exercise</span>
               </div>
-              <div className="text-white font-bold text-sm">{selectedExercise.name}</div>
+              <div className="text-white font-bold text-xs lg:text-sm">{selectedExercise.name}</div>
               <div className="text-xs text-gray-400 capitalize mt-1">
                 {selectedExercise.target} • {selectedExercise.equipment}
               </div>
@@ -1468,18 +2103,27 @@ return (
           )}
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-3 mb-4">
+          <div className="grid grid-cols-2 gap-2 lg:gap-3 mb-3 lg:mb-4">
             {/* Score Display */}
-            <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 rounded-lg p-3 text-center">
-              <div className="text-xl font-bold text-blue-400 mb-1">{poseScore}%</div>
+            <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 rounded-lg p-2 lg:p-3 text-center">
+              <div className="text-lg lg:text-xl font-bold text-blue-400 mb-1">{poseScore}%</div>
               <div className="text-xs text-blue-300/70 uppercase tracking-wide">Form Score</div>
             </div>
 
-            {/* Rep Counter */}
-            <div className="bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/30 rounded-lg p-3 text-center">
-              <div className="text-xl font-bold text-green-400 mb-1">{pushupCount}</div>
-              <div className="text-xs text-green-300/70 uppercase tracking-wide">Reps</div>
-            </div>
+            {/* Rep Counter / Hold Timer */}
+            {isYogaPose(selectedExercise?.id) ? (
+              <div className="bg-gradient-to-br from-yellow-500/20 to-orange-600/10 border border-yellow-500/30 rounded-lg p-2 lg:p-3 text-center">
+                <div className="text-lg lg:text-xl font-bold text-yellow-400 mb-1">{holdTimer}s</div>
+                <div className="text-xs text-yellow-300/70 uppercase tracking-wide">
+                  {isGoodFormHold ? "Holding" : "Hold Timer"}
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 rounded-lg p-2 lg:p-3 text-center">
+                <div className="text-lg lg:text-xl font-bold text-blue-400 mb-1">{pushupCount}</div>
+                <div className="text-xs text-blue-300/70 uppercase tracking-wide">Reps</div>
+              </div>
+            )}
           </div>
 
           {/* Feedback Messages */}

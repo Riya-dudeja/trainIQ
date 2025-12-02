@@ -185,7 +185,7 @@ export default function Home() {
                 <div className="w-16 h-16 bg-amber-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                   <span className="text-3xl">🚀</span>
                 </div>
-                <h3 className="text-lg font-medium text-white mb-2">AI Trainer Pro</h3>
+                <h3 className="text-lg font-medium text-white mb-2">AI Trainer</h3>
                 <p className="text-amber-200/70 text-sm mb-3">Complete coaching experience</p>
                 <div className="bg-amber-500/20 text-amber-300 px-3 py-1 rounded-md text-xs font-medium">
                   Recommended

@@ -13,49 +13,65 @@ A Next.js app for AI-powered pose detection, posture analysis, and exercise feed
 - **Integration with Gym Fit API** for comprehensive exercise database
 - **Enhanced UI** with progress rings, real-time metrics, and detailed instructions
 
-## Getting Started
 
-### Prerequisites
-- Node.js (v18+ recommended)
-- npm or yarn
 
-### Installation
-1. Clone the repository:
+# trainIQ: Fitness Trainer
+
+## Overview
+trainIQ is a web-based fitness coaching platform built with Next.js and React. It uses MediaPipe Pose for real-time body tracking and feedback, helping users improve their exercise form and track progress. The app works directly in the browser—no extra hardware required.
+
+## What Makes trainIQ Unique
+- **Real-Time Coaching:** Analyzes movement and form using pose estimation.
+- **Rep Counting:** Tracks squats, pushups, and jumping jacks with persistent state.
+- **Yoga Pose Support:** Hold timer system for yoga and static poses.
+- **Dynamic Feedback:** Transparent overlays and audio cues for guidance.
+- **Mobile-First Design:** Responsive UI for all devices.
+- **Consistent Branding:** Clean interface with clear navigation.
+
+## Tech Stack
+- Next.js, React, Tailwind CSS
+- MediaPipe Pose (33-point body tracking)
+- Web Speech API for audio feedback
+- Python backend (optional for advanced features)
+
+## Key Features
+- Real-time coaching in the browser
+- Accurate rep counting and pose analysis
+- Yoga timer system for static holds
+- Audio and visual feedback
+- Mobile-optimized UI
+- Scalable architecture for future expansion
+
+## Quick Start
+1. Clone the repo:
 	```bash
 	git clone https://github.com/Riya-dudeja/trainIQ.git
-	cd trainIQ
 	```
 2. Install dependencies:
 	```bash
 	npm install
-	# or
-	yarn install
 	```
-3. Set up environment variables:
-	- Copy `.env.local.example` to `.env.local` (or create `.env.local`)
-	- Add your RapidAPI key and host:
-	  ```env
-	  NEXT_PUBLIC_RAPIDAPI_KEY=your-rapidapi-key
-	  NEXT_PUBLIC_RAPIDAPI_HOST=gym-fit.p.rapidapi.com
-	  ```
-
-### Running the App
-```bash
-npm run dev
-# or
-yarn dev
-```
-Visit [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Pages
-- **`/pose`** - Basic pose detection demo with angle visualization
-- **`/gym-api`** - Full AI trainer experience with exercise selection and real-time feedback
+3. Run the app:
+	```bash
+	npm run dev
+	```
+4. Open in browser: [http://localhost:3000](http://localhost:3000)
 
 ## Project Structure
-```
-trainiq/
-├── app/
-│   ├── pose/         # Basic pose detection demo page
+- `app/gym-api/page.jsx` — Main trainer logic (pose analysis, rep counting, feedback)
+- `app/gym/page.jsx` — Quick Start trainer (minimal UI, instant feedback)
+- `app/page.js` — Homepage and navigation
+- `backend/` — Python pose server and environment setup
+
+## Recruiter Highlights
+- Full-stack React, Next.js, and Python integration
+- Real-world computer vision for fitness
+- Modern, mobile-optimized interface
+- Clean architecture ready for new features
+- Helps users train smarter, anywhere
+
+## Contact
+For more information or collaboration, connect via [GitHub](https://github.com/Riya-dudeja/trainIQ) or email.
 │   ├── gym-api/      # Enhanced AI trainer with real-time feedback
 │   └── utils/        # API utilities and pose analysis functions
 ├── public/           # Static assets

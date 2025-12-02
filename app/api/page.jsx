@@ -49,12 +49,12 @@ export default function ExercisesPage() {
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
                   <span className="text-black font-bold text-lg">T</span>
                 </div>
                 <div>
                   <span className="text-white text-2xl font-bold">TrainIQ</span>
-                  <div className="text-green-400 text-xs font-medium">AI FITNESS TRAINER</div>
+                  <div className="text-yellow-400 text-xs font-medium">AI FITNESS TRAINER</div>
                 </div>
               </Link>
               <div className="text-gray-300">Exercise Database</div>
@@ -65,7 +65,7 @@ export default function ExercisesPage() {
         {/* Loading State */}
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-full animate-spin flex items-center justify-center mb-4 mx-auto">
+            <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full animate-spin flex items-center justify-center mb-4 mx-auto">
               <div className="w-8 h-8 bg-black rounded-full"></div>
             </div>
             <div className="text-white text-xl font-semibold">Loading exercises...</div>
@@ -84,12 +84,12 @@ export default function ExercisesPage() {
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
                   <span className="text-black font-bold text-lg">T</span>
                 </div>
                 <div>
                   <span className="text-white text-2xl font-bold">TrainIQ</span>
-                  <div className="text-green-400 text-xs font-medium">AI FITNESS TRAINER</div>
+                  <div className="text-yellow-400 text-xs font-medium">AI FITNESS TRAINER</div>
                 </div>
               </Link>
               <div className="text-gray-300">Exercise Database</div>
@@ -107,7 +107,7 @@ export default function ExercisesPage() {
             <div className="text-gray-400 mb-6">{error}</div>
             <button 
               onClick={fetchExercises}
-              className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300"
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300"
             >
               Try Again
             </button>
@@ -124,12 +124,12 @@ export default function ExercisesPage() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
                 <span className="text-black font-bold text-lg">T</span>
               </div>
               <div>
                 <span className="text-white text-2xl font-bold">TrainIQ</span>
-                <div className="text-green-400 text-xs font-medium">AI FITNESS TRAINER</div>
+                <div className="text-yellow-400 text-xs font-medium">AI FITNESS TRAINER</div>
               </div>
             </Link>
             <div className="text-gray-300">Exercise Database</div>
@@ -141,7 +141,7 @@ export default function ExercisesPage() {
       <div className="container mx-auto px-6 py-12">
         <div className={`text-center mb-12 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h1 className="text-5xl font-bold text-white mb-4">
-            Exercise <span className="bg-gradient-to-r from-yellow-400 to-blue-500 bg-clip-text text-transparent">Database</span>
+            Exercise <span className="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">Database</span>
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
             Discover hundreds of exercises with detailed instructions, target muscles, and equipment requirements. Perfect for beginners starting their fitness journey!
@@ -228,7 +228,7 @@ export default function ExercisesPage() {
           </div>
           <Link 
             href="/gym-api"
-            className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-black font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-green-500/25"
+            className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-semibold py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-orange-500/25"
           >
             Start AI Training 🚀
           </Link>
@@ -240,7 +240,7 @@ export default function ExercisesPage() {
             {exercises.map((exercise, index) => (
               <div 
                 key={exercise.id || index} 
-                className={`group bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-800 overflow-hidden hover:border-green-400/50 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-green-400/20 ${
+                className={`group bg-gray-900/50 backdrop-blur-sm rounded-2xl border border-gray-800 overflow-hidden hover:border-yellow-400/50 transition-all duration-500 transform hover:scale-105 hover:shadow-2xl hover:shadow-yellow-400/20 ${
                   isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
                 }`}
                 style={{
@@ -249,7 +249,7 @@ export default function ExercisesPage() {
               >
                 {/* Exercise Image/GIF */}
                 {exercise.gifUrl && (
-                  <div className="aspect-video bg-gradient-to-br from-green-400/20 to-blue-500/20 relative overflow-hidden">
+                  <div className="aspect-video bg-gradient-to-br from-yellow-400/20 to-orange-500/20 relative overflow-hidden">
                     <img 
                       src={exercise.gifUrl} 
                       alt={exercise.name}
@@ -259,25 +259,25 @@ export default function ExercisesPage() {
                       }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent group-hover:from-black/30 transition-all duration-300"></div>
-                    <div className="absolute inset-0 bg-green-400/0 group-hover:bg-green-400/10 transition-all duration-300"></div>
+                    <div className="absolute inset-0 bg-yellow-400/0 group-hover:bg-yellow-400/10 transition-all duration-300"></div>
                   </div>
                 )}
 
                 <div className="p-6">
                   {/* Exercise Name */}
-                  <h3 className="text-xl font-bold text-white mb-3 capitalize group-hover:text-green-400 transition-colors">
+                  <h3 className="text-xl font-bold text-white mb-3 capitalize group-hover:text-yellow-400 transition-colors">
                     {exercise.name}
                   </h3>
 
                   {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-4">
                     {exercise.bodyPart && (
-                      <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm font-medium border border-blue-500/30">
+                      <span className="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm font-medium border border-orange-500/30">
                         🎯 {exercise.bodyPart}
                       </span>
                     )}
                     {exercise.target && (
-                      <span className="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm font-medium border border-green-500/30">
+                      <span className="px-3 py-1 bg-yellow-500/20 text-yellow-300 rounded-full text-sm font-medium border border-yellow-500/30">
                         💪 {exercise.target}
                       </span>
                     )}
@@ -295,12 +295,12 @@ export default function ExercisesPage() {
                       <div className="text-gray-400 text-sm space-y-1">
                         {exercise.instructions.slice(0, 2).map((instruction, idx) => (
                           <div key={idx} className="flex items-start">
-                            <span className="text-green-400 mr-2">{idx + 1}.</span>
+                            <span className="text-yellow-400 mr-2">{idx + 1}.</span>
                             <span>{typeof instruction === 'object' ? instruction.description : instruction}</span>
                           </div>
                         ))}
                         {exercise.instructions.length > 2 && (
-                          <div className="text-green-400 text-xs">
+                          <div className="text-yellow-400 text-xs">
                             +{exercise.instructions.length - 2} more steps...
                           </div>
                         )}
@@ -312,11 +312,11 @@ export default function ExercisesPage() {
                   <div className="flex space-x-2">
                     <Link
                       href={`/gym-api?exercise=${encodeURIComponent(exercise.name)}`}
-                      className="flex-1 bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-black font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-center transform hover:scale-105 hover:shadow-lg"
+                      className="flex-1 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-semibold py-2 px-4 rounded-lg transition-all duration-300 text-center transform hover:scale-105 hover:shadow-lg"
                     >
                       Train with AI
                     </Link>
-                    <button className="px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 hover:text-green-400 rounded-lg transition-all duration-300 transform hover:scale-110 hover:rotate-12">
+                    <button className="px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 text-gray-300 hover:text-yellow-400 rounded-lg transition-all duration-300 transform hover:scale-110 hover:rotate-12">
                       ⭐
                     </button>
                   </div>
@@ -337,7 +337,7 @@ export default function ExercisesPage() {
                 setSelectedBodyPart('');
                 setSelectedEquipment('');
               }}
-              className="bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-green-500/25"
+              className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-lg shadow-orange-500/25"
             >
               Show All Exercises
             </button>
@@ -350,12 +350,12 @@ export default function ExercisesPage() {
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
-              <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-blue-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
                 <span className="text-black font-bold text-lg">T</span>
               </div>
               <div>
                 <span className="text-white text-xl font-bold">TrainIQ</span>
-                <div className="text-green-400 text-xs font-medium">AI FITNESS TRAINER</div>
+                <div className="text-yellow-400 text-xs font-medium">AI FITNESS TRAINER</div>
               </div>
             </div>
             <div className="text-gray-400 text-sm">

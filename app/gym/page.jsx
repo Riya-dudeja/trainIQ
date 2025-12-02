@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
+import Link from "next/link";
 
 // Gym pose definitions with target angles
 const GYM_POSES = {
   pushup: {
     name: "Push-up",
     description: "Keep your body straight, lower chest to ground",
+    icon: "💪",
     targetAngles: {
       leftElbow: { min: 80, max: 100, ideal: 90 },
       rightElbow: { min: 80, max: 100, ideal: 90 },
@@ -26,6 +28,7 @@ const GYM_POSES = {
   squat: {
     name: "Squat",
     description: "Lower your body as if sitting back into a chair",
+    icon: "🏋️",
     targetAngles: {
       leftKnee: { min: 80, max: 120, ideal: 100 },
       rightKnee: { min: 80, max: 120, ideal: 100 },
@@ -44,6 +47,7 @@ const GYM_POSES = {
   plank: {
     name: "Plank",
     description: "Hold a straight body position",
+    icon: "⏱️",
     targetAngles: {
       leftElbow: { min: 85, max: 95, ideal: 90 },
       rightElbow: { min: 85, max: 95, ideal: 90 },
@@ -361,161 +365,257 @@ export default function GymPage() {
 
   if (!isHydrated) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-400 mx-auto mb-4"></div>
-          <p className="text-xl">Loading...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-400/80 mx-auto mb-4"></div>
+          <p className="text-xl text-gray-300">Loading trainIQ...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-4">
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-6">
-          <h1 className="text-3xl font-bold mb-2">🏋️ Gym Pose Trainer</h1>
-          <p className="text-gray-300">Perfect your form with real-time feedback</p>
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-white overflow-hidden">
+      {/* Subtle Background Effects */}
+      <div className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-950/10 via-transparent to-gray-950"></div>
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-amber-500/3 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-yellow-600/3 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Navigation */}
+      <nav className="relative z-50 backdrop-blur-sm border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-amber-600/80 to-yellow-600/80 rounded-lg flex items-center justify-center">
+                <span className="text-black font-semibold text-sm">T</span>
+              </div>
+              <div>
+                <span className="text-white text-xl font-semibold tracking-tight">trainIQ</span>
+                <div className="text-amber-400/60 text-xs font-medium">QUICK START</div>
+              </div>
+            </Link>
+
+            {/* Navigation */}
+            <div className="flex items-center space-x-4">
+              <Link 
+                href="/gym-api" 
+                className="text-gray-400 hover:text-white transition-colors text-sm"
+              >
+                Full Trainer
+              </Link>
+              <Link 
+                href="/" 
+                className="text-gray-400 hover:text-white transition-colors text-sm"
+              >
+                ← Back
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-8">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl md:text-5xl font-semibold mb-4 leading-tight">
+            <span className="text-white">Quick Start</span>
+            <br />
+            <span className="bg-gradient-to-r from-amber-400/90 via-yellow-500/90 to-amber-500/90 bg-clip-text text-transparent">
+              Form Trainer
+            </span>
+          </h1>
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            Fast pose analysis with instant feedback. Perfect your form with minimal setup.
+          </p>
         </div>
 
-        {/* Pose Selection */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Select Exercise:</label>
-          <div className="flex gap-2 flex-wrap">
+        {/* Exercise Selection */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold text-white mb-6 text-center">Choose Your Exercise</h2>
+          <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
             {Object.keys(GYM_POSES).map((poseKey) => (
               <button
                 key={poseKey}
                 onClick={() => setSelectedPose(poseKey)}
-                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                className={`group relative p-6 rounded-xl border transition-all duration-200 ${
                   selectedPose === poseKey
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-700 text-gray-300 hover:bg-gray-600"
+                    ? "bg-amber-500/10 border-amber-500/30 shadow-lg shadow-amber-500/10"
+                    : "bg-gray-900/30 border-gray-700/30 hover:border-gray-600/40 hover:bg-gray-900/50"
                 }`}
               >
-                {GYM_POSES[poseKey].name}
+                <div className="text-center">
+                  <div className={`w-16 h-16 mx-auto mb-4 rounded-xl flex items-center justify-center transition-colors ${
+                    selectedPose === poseKey 
+                      ? "bg-amber-500/20" 
+                      : "bg-gray-600/20 group-hover:bg-gray-600/30"
+                  }`}>
+                    <span className="text-3xl">{GYM_POSES[poseKey].icon}</span>
+                  </div>
+                  <h3 className={`text-lg font-semibold mb-2 transition-colors ${
+                    selectedPose === poseKey ? "text-amber-300" : "text-white"
+                  }`}>
+                    {GYM_POSES[poseKey].name}
+                  </h3>
+                  <p className="text-gray-400 text-sm">
+                    {GYM_POSES[poseKey].description}
+                  </p>
+                </div>
+                {selectedPose === poseKey && (
+                  <div className="absolute top-3 right-3">
+                    <div className="w-3 h-3 bg-amber-400 rounded-full"></div>
+                  </div>
+                )}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Exercise Info */}
-        <div className="bg-gray-800 rounded-lg p-4 mb-6">
-          <h2 className="text-xl font-semibold mb-2">{GYM_POSES[selectedPose].name}</h2>
-          <p className="text-gray-300 mb-3">{GYM_POSES[selectedPose].description}</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h3 className="font-medium mb-2">Instructions:</h3>
-              <ul className="list-disc list-inside text-sm text-gray-300 space-y-1">
-                {GYM_POSES[selectedPose].instructions.map((instruction, index) => (
-                  <li key={index}>{instruction}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-medium mb-2">Target Angles:</h3>
-              <div className="text-sm text-gray-300 space-y-1">
-                {Object.entries(GYM_POSES[selectedPose].targetAngles).map(([angle, target]) => (
-                  <div key={angle} className="flex justify-between">
-                    <span>{angle.replace(/([A-Z])/g, ' $1').toLowerCase()}:</span>
-                    <span>{target.ideal}° (ideal)</span>
+
+
+        {/* Main Camera View */}
+        <div className="mb-8">
+          <div className="bg-black rounded-xl overflow-hidden max-w-4xl mx-auto">
+            <div className="relative bg-black" style={{ width: '100%', aspectRatio: '4/3' }}>
+              <Webcam
+                ref={webcamRef}
+                width={640}
+                height={480}
+                mirrored
+                onUserMedia={handleCameraLoad}
+                onUserMediaError={handleCameraError}
+                style={{ 
+                  position: "absolute", 
+                  top: 0, 
+                  left: 0, 
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  opacity: 0, 
+                  pointerEvents: "none" 
+                }}
+              />
+              <canvas
+                ref={canvasRef}
+                width={640}
+                height={480}
+                style={{ 
+                  position: "absolute", 
+                  top: 0, 
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
+              
+              {/* Camera error overlay */}
+              {cameraError && (
+                <div className="absolute inset-0 bg-black/90 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <div className="text-4xl mb-4">📹</div>
+                    <p className="text-lg mb-4">{cameraError}</p>
+                    <button
+                      onClick={() => window.location.reload()}
+                      className="bg-amber-500 hover:bg-amber-600 text-black px-6 py-2 rounded-lg"
+                    >
+                      Retry Camera
+                    </button>
                   </div>
-                ))}
+                </div>
+              )}
+
+              {/* Exercise name overlay */}
+              <div className="absolute top-4 left-4">
+                <div className="bg-black/50 text-white px-3 py-1 rounded text-sm">
+                  {GYM_POSES[selectedPose].name}
+                </div>
+              </div>
+
+              {/* Score overlay */}
+              <div className="absolute top-4 right-4">
+                <div className="bg-black/50 text-amber-400 px-3 py-1 rounded text-sm font-medium">
+                  {poseScore}%
+                </div>
+              </div>
+
+              {/* Live Feedback Overlay */}
+              <div className="absolute bottom-2 left-2 right-2 md:bottom-4 md:left-4 md:right-4">
+                <div className="bg-black/70 backdrop-blur-sm text-white px-2 py-2 md:px-4 md:py-3 rounded-lg">
+                  {feedback.length > 0 ? (
+                    <div className="flex items-start">
+                      <span className="text-red-400 mr-1 md:mr-2 text-xs md:text-sm">⚠️</span>
+                      <div className="text-xs md:text-sm text-red-200 leading-tight">{feedback[0]}</div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center">
+                      <span className="mr-1 md:mr-2 text-xs md:text-sm">
+                        {!mediaPipeLoaded ? "⏳" : 
+                         cameraError ? "📹" : 
+                         poseScore === 0 ? "👤" : "✅"}
+                      </span>
+                      <div className="text-xs md:text-sm leading-tight">
+                        {!mediaPipeLoaded ? "Loading..." : 
+                         cameraError ? "Camera needed" : 
+                         poseScore === 0 ? "Get in position" : 
+                         "Great form!"}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Camera Feed */}
-          <div className="lg:col-span-2">
-            <div className="bg-black rounded-lg overflow-hidden">
-              <div className="relative" style={{ width: 640, height: 480 }}>
-                <Webcam
-                  ref={webcamRef}
-                  width={640}
-                  height={480}
-                  mirrored
-                  onUserMedia={handleCameraLoad}
-                  onUserMediaError={handleCameraError}
-                  style={{ position: "absolute", top: 0, left: 0, opacity: 0, pointerEvents: "none" }}
-                />
-                <canvas
-                  ref={canvasRef}
-                  width={640}
-                  height={480}
-                  style={{ position: "absolute", top: 0, left: 0 }}
-                />
-                
-                {/* Camera error overlay */}
-                {cameraError && (
-                  <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center">
-                    <div className="text-center text-white">
-                      <p className="text-lg mb-2">⚠️ Camera Error</p>
-                      <p className="text-sm">{cameraError}</p>
-                      <button
-                        onClick={() => window.location.reload()}
-                        className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded"
-                      >
-                        Retry
-                      </button>
-                    </div>
-                  </div>
-                )}
+        {/* Simple Status Bar */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <div className="bg-gray-900/30 rounded-lg p-4 text-center">
+            {feedback.length > 0 ? (
+              <div className="text-red-300">{feedback[0]}</div>
+            ) : (
+              <div className="text-gray-300">
+                {!mediaPipeLoaded ? "Loading AI..." : 
+                 cameraError ? "Camera access required" : 
+                 poseScore === 0 ? "Position yourself in the camera view" : 
+                 "Great form! Keep it up!"}
               </div>
-            </div>
+            )}
           </div>
+        </div>
 
-          {/* Feedback Panel */}
-          <div className="space-y-4">
-            {/* Score */}
-            <div className="bg-gray-800 rounded-lg p-4">
-              <h3 className="font-medium mb-2">Form Score</h3>
-              <div className="text-center">
-                <div className="text-4xl font-bold text-blue-400">{poseScore}%</div>
-                <div className="text-sm text-gray-400 mt-1">
-                  {poseScore >= 90 ? "Excellent!" : poseScore >= 70 ? "Good" : poseScore >= 50 ? "Fair" : "Needs Work"}
-                </div>
-              </div>
+        {/* Exercise Instructions */}
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-gray-900/30 rounded-xl p-6">
+            <div className="flex items-center mb-4">
+              <span className="text-2xl mr-3">{GYM_POSES[selectedPose].icon}</span>
+              <h3 className="text-xl font-semibold text-white">{GYM_POSES[selectedPose].name}</h3>
             </div>
-
-            {/* Current Angles */}
-            <div className="bg-gray-800 rounded-lg p-4">
-              <h3 className="font-medium mb-2">Current Angles</h3>
-              <div className="space-y-1 text-sm">
-                {Object.entries(currentAngles).map(([angle, value]) => {
-                  const target = GYM_POSES[selectedPose].targetAngles[angle];
-                  if (!target) return null;
-                  
-                  const isInRange = value >= target.min && value <= target.max;
-                  return (
-                    <div key={angle} className="flex justify-between">
-                      <span className={isInRange ? "text-green-400" : "text-red-400"}>
-                        {angle.replace(/([A-Z])/g, ' $1').toLowerCase()}:
-                      </span>
-                      <span className={isInRange ? "text-green-400" : "text-red-400"}>
-                        {value.toFixed(0)}°
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Feedback */}
-            <div className="bg-gray-800 rounded-lg p-4">
-              <h3 className="font-medium mb-2">Feedback</h3>
-              {feedback.length > 0 ? (
-                <ul className="space-y-2 text-sm">
-                  {feedback.map((item, index) => (
-                    <li key={index} className="text-red-400 flex items-start">
-                      <span className="mr-2">⚠️</span>
-                      {item}
-                    </li>
+            <p className="text-gray-300 mb-4">{GYM_POSES[selectedPose].description}</p>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="text-amber-400 font-medium mb-2">Form Instructions</h4>
+                <ul className="space-y-1 text-gray-300 text-sm">
+                  {GYM_POSES[selectedPose].instructions.map((instruction, index) => (
+                    <li key={index}>• {instruction}</li>
                   ))}
                 </ul>
-              ) : (
-                <p className="text-green-400 text-sm">Great form! Keep it up! 🎉</p>
-              )}
+              </div>
+              
+              <div>
+                <h4 className="text-blue-400 font-medium mb-2">Target Angles</h4>
+                <div className="space-y-1 text-gray-300 text-sm">
+                  {Object.entries(GYM_POSES[selectedPose].targetAngles).slice(0, 4).map(([angle, target]) => (
+                    <div key={angle} className="flex justify-between">
+                      <span className="capitalize">{angle.replace(/([A-Z])/g, ' $1').toLowerCase()}:</span>
+                      <span className="text-blue-400">{target.ideal}°</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
