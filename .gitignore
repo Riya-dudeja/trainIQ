@@ -24,6 +24,30 @@
 .DS_Store
 *.pem
 
+# Python environments and cache
+../backend/pose_env/
+../backend/venv311/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Static analysis and coverage
+*.coverage
+coverage/
+
+# OS/editor files
+*.bak
+*.swp
+*.idea/
+*.vscode/
+
+# Log files
+*.log
+
+# Static assets
+../public/*.svg
+
 # debug
 npm-debug.log*
 yarn-debug.log*

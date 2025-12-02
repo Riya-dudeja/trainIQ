@@ -72,12 +72,6 @@ trainIQ is a web-based fitness coaching platform built with Next.js and React. I
 
 ## Contact
 For more information or collaboration, connect via [GitHub](https://github.com/Riya-dudeja/trainIQ) or email.
-│   ├── gym-api/      # Enhanced AI trainer with real-time feedback
-│   └── utils/        # API utilities and pose analysis functions
-├── public/           # Static assets
-├── .env.local        # Environment variables (create from .env.local.example)
-├── package.json      # Project metadata
-└── README.md         # Project documentation
 ```
 
 ## Technologies Used
