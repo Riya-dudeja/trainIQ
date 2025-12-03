@@ -545,7 +545,7 @@ export default function GymAPIPage() {
           } else if (rightKnee) {
             kneeAngle = rightKnee;
           } else {
-            return { score: 0, feedback: "Position legs in camera view", phase: squatState, reps: repCount };
+            return { score: 0, feedback: "Position legs in camera view", phase: squatState, reps: squatRepCount };
           }
 
           console.log(`🔍 Squat Analysis - Knee: ${kneeAngle.toFixed(0)}°, State: ${squatState}`);
@@ -603,7 +603,7 @@ export default function GymAPIPage() {
           if (kneeAngle > 170) {
             return { score: 20, feedback: "Stand ready, then squat down", phase: squatState, reps: repCount };
           } else {
-            return { score: 0, feedback: "Position legs in camera view", phase: squatState, reps: repCount };
+            return { score: 0, feedback: "Position legs in camera view", phase: squatState, reps: squatRepCount };
           }
         }
 
