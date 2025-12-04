@@ -12,7 +12,7 @@ import { gymFitAPI, poseUtils } from "../utils/gymFitApi";
 //   "assisted", "band", "barbell", "body weight", "bosu ball", "cable", 
 //   "dumbbell", "elliptical machine", "ez barbell", "hammer", "kettlebell", 
 //   "leverage machine", "medicine ball", "olympic barbell", "resistance band", 
-//   "roller", "rope", "skierg machine", "sled machine", "smith machine", 
+//   "roller", "rope", "skierg machidne", "sled machine", "smith machine", 
 //   "stability ball", "stationary bike", "stepmill machine", "tire", "trap bar", "upper body ergometer", "weighted"
 // ];
 
@@ -1407,29 +1407,23 @@ export default function GymAPIPage() {
             const smartFeedback = intelligentFeedback.updateFeedback(smoothedAngles, overallConfidence);
             
             // Only update UI if we have sufficient confidence AND not in demo mode
-            if (overallConfidence > 0.6 && !isDemoMode) {
+            if (overallConfidence > 0.3 && !isDemoMode) {
+                          console.log('DEBUG: overallConfidence =', overallConfidence);
+                          console.log('DEBUG: poseLandmarks =', results.poseLandmarks);
               setPoseScore(analysis.score);
-              
               // Handle Hold Timer for Yoga Poses vs Reps for Traditional Exercises
               if (isYogaPose(selectedExercise?.id)) {
-                // Yoga pose hold timer logic
-                const currentTime = Date.now();
-                const goodFormThreshold = 75; // Score needed for good hold
-                
-                if (analysis.score >= goodFormThreshold) {
+                if (analysis.score >= 75) {
                   if (!isGoodFormHold) {
-                    // Starting a good form hold
                     setIsGoodFormHold(true);
-                    setHoldStartTime(currentTime);
+                    setHoldStartTime(Date.now());
                     setHoldTimer(0);
                   } else {
-                    // Continue holding - update timer
-                    const holdDuration = Math.floor((currentTime - holdStartTime) / 1000);
+                    const holdDuration = Math.floor((Date.now() - holdStartTime) / 1000);
                     setHoldTimer(holdDuration);
                   }
-                  setPushupCount(holdTimer); // Display hold time instead of reps
+                  setPushupCount(holdTimer);
                 } else {
-                  // Poor form - reset hold timer
                   if (isGoodFormHold) {
                     setIsGoodFormHold(false);
                     setHoldStartTime(null);
@@ -1437,17 +1431,14 @@ export default function GymAPIPage() {
                   setPushupCount(0);
                 }
               } else {
-                // Traditional exercise - use reps
                 setPushupCount(analysis.reps);
               }
-              
+              // Feedback
               let currentFeedback;
               if (isYogaPose(selectedExercise?.id)) {
-                // Yoga pose feedback with hold timer
                 const holdStatus = isGoodFormHold 
                   ? `Holding for ${holdTimer}s - Great form! 🧘‍♀️`
                   : 'Adjust your pose to start hold timer ⏱️';
-                  
                 currentFeedback = [
                   `🧘 ${selectedExercise.name}: ${analysis.feedback}`,
                   `Score: ${analysis.score}/100`,
@@ -1456,7 +1447,6 @@ export default function GymAPIPage() {
                   ...smartFeedback
                 ];
               } else {
-                // Traditional exercise feedback
                 currentFeedback = [
                   `🏋️ REPS: ${analysis.reps} | ${analysis.feedback}`,
                   `Phase: ${analysis.phase.toUpperCase()}`,
@@ -1466,15 +1456,12 @@ export default function GymAPIPage() {
                   ...smartFeedback
                 ];
               }
-              
               setFeedback(currentFeedback);
-              
               // Enhanced Audio Feedback System with Detailed Instructions (Real Mode Only)
               if (isAudioEnabled && !isDemoMode) {
                 // Special celebration for completed reps
                 if (analysis.justCompleted) {
                   speakFeedback(analysis.feedback);
-                  
                   // Add motivational milestone messages
                   if (analysis.reps === 1) {
                     setTimeout(() => speakFeedback("Perfect! Now let's keep that form consistent"), 1500);
@@ -1483,12 +1470,9 @@ export default function GymAPIPage() {
                   } else if (analysis.reps === 10) {
                     setTimeout(() => speakFeedback("Incredible endurance! Your form is improving!"), 1500);
                   }
-                }
-                // Prioritize detailed form coaching instructions
-                else {
+                } else {
                   // For yoga poses, provide specific corrective audio feedback
                   if (isYogaPose(selectedExercise?.id)) {
-                    // Parse the feedback string to get individual corrections
                     if (analysis.feedback) {
                       const corrections = analysis.feedback.split(' • ');
                       const negativeCorrections = corrections.filter(c => 
@@ -1500,8 +1484,6 @@ export default function GymAPIPage() {
                         c.includes('Keep your hips level') ||
                         c.includes('Bring palms together')
                       );
-                      
-                      // Speak the most important correction
                       if (negativeCorrections.length > 0) {
                         speakFeedback(negativeCorrections[0]);
                       } else if (analysis.score > 75) {
@@ -1511,19 +1493,13 @@ export default function GymAPIPage() {
                       }
                     }
                   } else {
-                    // Traditional exercise feedback
                     const audioInstruction = intelligentFeedback.getAudioInstructions(smoothedAngles, overallConfidence);
                     if (audioInstruction) {
-                      // Use our detailed instructions as PRIMARY feedback
                       speakFeedback(audioInstruction);
-                    }
-                    // Only use generic feedback if no detailed instructions available
-                    else if (analysis.feedback) {
+                    } else if (analysis.feedback) {
                       speakFeedback(getScoreBasedFeedback(analysis.score, [analysis.feedback]));
                     }
                   }
-                  
-                  // Smart coaching tips as secondary feedback
                   if (smartFeedback.length > 0) {
                     setTimeout(() => {
                       speakFeedback(smartFeedback[0]);
