@@ -33,86 +33,139 @@ export default function GymAPIPage() {
   const [leftArmPercentage, setLeftArmPercentage] = useState(0);
   const [rightArmPercentage, setRightArmPercentage] = useState(0);
   const [backendStatus, setBackendStatus] = useState("disconnected");
-  
-  // Backend connection management
+
+    // Backend connection management
+    useEffect(() => {
+      if (typeof window === "undefined") return;
+      setIsHydrated(true);
+      const initializeBackend = async () => {
+        try {
+          // Check backend health
+          const healthResponse = await fetch('http://localhost:5000/api/health');
+          if (!healthResponse.ok) {
+            throw new Error('Backend not available');
+          }
+          // Initialize pose detection
+          const initResponse = await fetch('http://localhost:5000/api/initialize');
+          if (!initResponse.ok) {
+            throw new Error('Failed to initialize pose detection');
+          }
+          setBackendStatus("connected");
+          setApiStatus("connected");
+          setIsLoaded(true);
+          setFeedback(['🚀 Python Backend Connected!', 'Using same libraries as reference repo']);
+        } catch (err) {
+          console.error('Backend connection error:', err);
+          setError('Python backend not available. Please start the backend server.');
+          setBackendStatus("error");
+          setApiStatus("offline");
+          setFeedback([
+            'Backend server not running',
+            'Run: python backend/pose_server.py',
+            'Install: pip install -r backend/requirements.txt'
+          ]);
+        }
+      };
+      initializeBackend();
+    }, []);
+
+
+
+  // WebSocket ref for cleanup
+  const wsRef = useRef(null);
+
+  // WebSocket camera streaming when backend is connected
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    setIsHydrated(true);
-    
-    const initializeBackend = async () => {
-      try {
-        // Check backend health
-        const healthResponse = await fetch('http://localhost:5000/api/health');
-        if (!healthResponse.ok) {
-          throw new Error('Backend not available');
+    if (backendStatus !== "connected") return;
+    let ws;
+    let isMounted = true;
+    try {
+      ws = new window.WebSocket('ws://localhost:8765');
+      wsRef.current = ws;
+      ws.onopen = () => {
+        // Optionally set feedback or status
+      };
+      ws.onmessage = (event) => {
+        if (!isMounted) return;
+        let data = {};
+        try {
+          data = JSON.parse(event.data);
+        } catch (e) {
+          // Fallback: treat as raw base64 string
+          data = { frame_base64: event.data };
         }
-        
-        // Initialize pose detection
-        const initResponse = await fetch('http://localhost:5000/api/initialize');
-        if (!initResponse.ok) {
-          throw new Error('Failed to initialize pose detection');
+        // Update pose data state
+        setPushupCount(data.push_ups || 0);
+        setLeftArmPercentage(data.left_percentage || 0);
+        setRightArmPercentage(data.right_percentage || 0);
+        if (isPushupMode) {
+          setFeedback([
+            `Push-ups: ${data.push_ups || 0}`,
+            `L-Arm: ${data.left_percentage || 0}%`,
+            `R-Arm: ${data.right_percentage || 0}%`,
+            `Direction: ${data.direction === 0 ? 'DOWN' : 'UP'}`
+          ]);
+          setPoseScore(Math.round(((data.left_percentage || 0) + (data.right_percentage || 0)) / 2));
         }
-        
-        setBackendStatus("connected");
-        setApiStatus("connected");
-        setIsLoaded(true);
-        setFeedback(['🚀 Python Backend Connected!', 'Using same libraries as reference repo']);
-        
-        // Start pose detection loop
-        startPoseDetection();
-        
-      } catch (err) {
-        console.error('Backend connection error:', err);
-        setError('Python backend not available. Please start the backend server.');
-        setBackendStatus("error");
-        setApiStatus("offline");
-        setFeedback([
-          'Backend server not running',
-          'Run: python backend/pose_server.py',
-          'Install: pip install -r backend/requirements.txt'
-        ]);
+        // Draw frame
+        if (data.frame_base64 && canvasRef.current) {
+          const canvas = canvasRef.current;
+          const ctx = canvas.getContext('2d');
+          const img = new window.Image();
+          img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          };
+          img.src = `data:image/jpeg;base64,${data.frame_base64}`;
+        }
+      };
+      ws.onerror = (e) => {
+        // Optionally set error feedback
+        console.error('WebSocket error', e);
+      };
+      ws.onclose = () => {
+        wsRef.current = null;
+      };
+    } catch (e) {
+      console.error('WebSocket connection failed', e);
+    }
+    return () => {
+      isMounted = false;
+      if (wsRef.current) {
+        wsRef.current.close();
+        wsRef.current = null;
       }
     };
-    
-    initializeBackend();
-  }, []);
-  
-  const startPoseDetection = () => {
+  }, [backendStatus]);
+
+    // Top-level processFrame function
     const processFrame = async () => {
       try {
         if (backendStatus !== "connected") return;
-        
         const response = await fetch('http://localhost:5000/api/process_frame');
         if (!response.ok) {
           throw new Error('Failed to process frame');
         }
-        
         const data = await response.json();
-        
         if (data.error) {
           console.error('Backend error:', data.error);
           return;
         }
-        
         // Update push-up data from backend
         setPushupCount(data.push_ups || 0);
         setLeftArmPercentage(data.left_percentage || 0);
         setRightArmPercentage(data.right_percentage || 0);
-        
         // Display the processed frame
         if (data.frame_base64 && canvasRef.current) {
           const canvas = canvasRef.current;
           const ctx = canvas.getContext('2d');
           const img = new Image();
-          
           img.onload = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           };
-          
           img.src = `data:image/jpeg;base64,${data.frame_base64}`;
         }
-        
         // Update feedback
         if (isPushupMode) {
           setFeedback([
@@ -123,18 +176,10 @@ export default function GymAPIPage() {
           ]);
           setPoseScore(Math.round((data.left_percentage + data.right_percentage) / 2));
         }
-        
       } catch (err) {
         console.warn('Frame processing error:', err.message);
       }
     };
-    
-    // Process frames at 15 FPS for good performance
-    const intervalId = setInterval(processFrame, 66); // ~15 FPS
-    
-    return () => clearInterval(intervalId);
-  };
-  
   const resetPushupCounter = async () => {
     try {
       await fetch('http://localhost:5000/api/reset');
@@ -245,7 +290,6 @@ export default function GymAPIPage() {
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="text-center">
-                    <div className="text-6xl mb-4">🐍</div>
                     <p className="text-lg">Python Backend Required</p>
                     <p className="text-sm text-gray-400 mt-2">
                       Run: python backend/pose_server.py
@@ -256,7 +300,7 @@ export default function GymAPIPage() {
               
               {/* Backend status indicator */}
               <div className="absolute top-4 left-4 bg-black/50 px-2 py-1 rounded text-xs">
-                {backendStatus === "connected" ? "🐍 Python Active" : "📷 Backend Offline"}
+                {backendStatus === "connected" ? "Python Active" : "📷 Backend Offline"}
               </div>
               
               {/* Push-up mode indicator with progress bars */}
@@ -445,7 +489,7 @@ export default function GymAPIPage() {
           <div className="mt-8 bg-red-900/20 border border-red-500 rounded-lg p-6 text-center">
             <h3 className="text-xl font-bold text-red-400 mb-4">🐍 Python Backend Required</h3>
             <div className="text-left max-w-2xl mx-auto space-y-2">
-              <p className="text-sm">To use the stable pose detection (same as reference repo):</p>
+              <p className="text-sm">To use the stable pose detection:</p>
               <div className="bg-black/50 p-4 rounded font-mono text-sm">
                 <p>cd backend</p>
                 <p>pip install -r requirements.txt</p>

@@ -6,6 +6,7 @@ opencv-python>=4.5.0
 numpy>=1.19.0
 flask>=2.0.0
 flask-cors>=3.0.0
+websockets
 
 # MediaPipe - try different versions based on Python version
 # For Python 3.8-3.10: mediapipe>=0.8.0

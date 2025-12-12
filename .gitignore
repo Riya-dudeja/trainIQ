@@ -28,6 +28,7 @@
 ../backend/pose_env/
 ../backend/venv311/
 __pycache__/
+../backend/python-scripts
 *.pyc
 *.pyo
 *.pyd

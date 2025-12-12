@@ -12,16 +12,17 @@ fi
 
 echo "✅ Python 3 found"
 
-# Create virtual environment
+
+# Create virtual environment (venv311)
 echo "📦 Creating virtual environment..."
-python3 -m venv pose_env
+python3 -m venv venv311
 
 # Activate virtual environment
 echo "🔄 Activating virtual environment..."
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
-    source pose_env/Scripts/activate
+    source venv311/Scripts/activate
 else
-    source pose_env/bin/activate
+    source venv311/bin/activate
 fi
 
 # Upgrade pip
@@ -37,9 +38,9 @@ echo "✅ Setup complete!"
 echo ""
 echo "🚀 To start the server:"
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
-    echo "   pose_env\\Scripts\\activate"
-else
-    echo "   source pose_env/bin/activate"
+    echo "   venv311\\Scripts\\activate"
+    else
+        echo "   source venv311/bin/activate"
 fi
 echo "   python pose_server.py"
 echo ""
