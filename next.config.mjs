@@ -4,8 +4,7 @@ const nextConfig = {
   experimental: {
     // Other experimental features can go here
   },
-  
-  // Configure Turbopack rules (moved from experimental.turbo)
+
   turbopack: {
     rules: {
       '*.wasm': {
@@ -66,7 +65,12 @@ const nextConfig = {
 
   // Images configuration
   images: {
-    domains: ['cdn.jsdelivr.net'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'cdn.jsdelivr.net',
+      },
+    ],
     unoptimized: true,
   },
 
