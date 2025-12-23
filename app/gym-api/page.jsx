@@ -1,8 +1,24 @@
-"use client";
 
+"use client";
 import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import { gymFitAPI, poseUtils } from "../utils/gymFitApi";
+
+// Simple Toast component
+function Toast({ message, position = "top", onClose }) {
+  return (
+    <div
+      className={`fixed z-50 ${position === "top" ? "top-6" : "bottom-6"} left-1/2 transform -translate-x-1/2 bg-gray-900 text-yellow-200 border border-yellow-400 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in`}
+      style={{ minWidth: 220 }}
+    >
+      <span className="text-lg">⚡</span>
+      <span className="font-medium text-sm">{message}</span>
+      {onClose && (
+        <button onClick={onClose} className="ml-2 text-yellow-400 hover:text-yellow-200 text-lg">&times;</button>
+      )}
+    </div>
+  );
+}
 
 // const VALID_BODYPARTS = [
 //   "back", "cardio", "chest", "lower arms", "lower legs", "neck", 
@@ -17,6 +33,14 @@ import { gymFitAPI, poseUtils } from "../utils/gymFitApi";
 // ];
 
 export default function GymAPIPage() {
+    // Ensure hydration state is set on client mount
+    useEffect(() => {
+      setIsHydrated(true);
+    }, []);
+  const [showModeToast, setShowModeToast] = useState(false);
+  const [currentConfidence, setCurrentConfidence] = useState(0);
+  const [squatState, setSquatState] = useState('up');
+  const [showAudioToast, setShowAudioToast] = useState(false);
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -33,13 +57,10 @@ export default function GymAPIPage() {
   const [pushupCount, setPushupCount] = useState(0);
   const [pushupPhase, setPushupPhase] = useState('up');
   const [isPushupMode, setIsPushupMode] = useState(false);
-  const [isDemoMode, setIsDemoMode] = useState(false);
-  
-  // Hold Timer State for Yoga Poses
+  const [isDemoMode, setIsDemoMode] = useState(true); // Start in demo mode
   const [holdTimer, setHoldTimer] = useState(0);
   const [holdStartTime, setHoldStartTime] = useState(null);
   const [isGoodFormHold, setIsGoodFormHold] = useState(false);
-  
   // UI State
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(false);
@@ -47,15 +68,40 @@ export default function GymAPIPage() {
   const [lastSpokenFeedback, setLastSpokenFeedback] = useState("");
   const [lastSpeechTime, setLastSpeechTime] = useState(0);
   const [showControls, setShowControls] = useState(true);
-  const [currentConfidence, setCurrentConfidence] = useState(0);
-
-  // Exercise State Management
-  const [squatState, setSquatState] = useState('up');
   const [squatRepCount, setSquatRepCount] = useState(0);
   const [jackState, setJackState] = useState('together');
   const [jackRepCount, setJackRepCount] = useState(0);
   const [pushupState, setPushupState] = useState('up');
   const [pushupRepCount, setPushupRepCount] = useState(0);
+
+  // Auto-switch to real mode when MediaPipe is loaded
+  useEffect(() => {
+    if (isLoaded && isDemoMode) {
+      setIsDemoMode(false);
+      setPoseScore(0);
+      setFeedback(["Real Mode: Actual pose detection"]);
+    }
+  }, [isLoaded, isDemoMode]);
+
+  // Show mode switch toast when in demo mode
+  useEffect(() => {
+    if (isDemoMode) {
+      setShowModeToast(true);
+      const t = setTimeout(() => setShowModeToast(false), 6000);
+      return () => clearTimeout(t);
+    }
+  }, [isDemoMode]);
+
+  // Show audio enable toast when audio is off and not in demo mode
+  useEffect(() => {
+    if (!isAudioEnabled && !isDemoMode) {
+      setShowAudioToast(true);
+      const t = setTimeout(() => setShowAudioToast(false), 6000);
+      return () => clearTimeout(t);
+    }
+  }, [isAudioEnabled, isDemoMode]);
+  
+  // (Removed duplicate useState hooks for holdTimer, isFullScreen, isAudioEnabled, etc.)
 
   // Helper function to check if selected exercise is a yoga pose
   const isYogaPose = (exerciseId) => {
@@ -1620,9 +1666,7 @@ export default function GymAPIPage() {
     };
 
     loadScripts().then(() => {
-      if (isLoaded) {
-        initializePoseDetection();
-      }
+      initializePoseDetection();
     });
 
     return () => {
@@ -1637,7 +1681,7 @@ export default function GymAPIPage() {
         }
       }
     };
-  }, [isHydrated, isLoaded]);
+  }, [isHydrated]);
 
   // Demo-ready initialization - only as fallback when real pose detection fails
   useEffect(() => {
@@ -2226,7 +2270,7 @@ return (
             </div>
             
             {/* Audio Control */}
-            <div className="p-2 bg-gray-800/30 rounded-lg border border-gray-700/50">
+            <div className="p-2 bg-gray-800/30 rounded-lg border border-gray-700/50 relative">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-400">Audio:</span>
                 <div className="flex gap-1">
@@ -2243,7 +2287,6 @@ return (
                   </button>
                   <button
                     onClick={() => {
-                      // Test audio function
                       window.speechSynthesis.cancel();
                       const testUtterance = new SpeechSynthesisUtterance("Audio test - TrainIQ is working");
                       testUtterance.rate = 0.9;
@@ -2257,21 +2300,25 @@ return (
                   </button>
                 </div>
               </div>
+              {/* Audio Toast (inline, right above audio toggle) */}
+              {showAudioToast && (
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-yellow-200 border border-yellow-400 px-3 py-1 rounded shadow-lg text-xs animate-fade-in z-50">
+                  Enable audio for voice coaching!
+                </div>
+              )}
             </div>
 
             {/* Demo Mode Toggle */}
-            <div className="p-2 bg-gray-800/30 rounded-lg border border-gray-700/50">
+            <div className="p-2 bg-gray-800/30 rounded-lg border border-gray-700/50 relative">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-gray-400">Mode:</span>
                 <button
                   onClick={() => {
                     setIsDemoMode(!isDemoMode);
                     if (!isDemoMode) {
-                      // Switch to demo mode
                       setPoseScore(85);
                       setFeedback(['Demo Mode: High scores for presentation']);
                     } else {
-                      // Switch to real mode
                       setPoseScore(0);
                       setFeedback(['Real Mode: Actual pose detection']);
                     }
@@ -2286,6 +2333,12 @@ return (
                   <span>{isDemoMode ? "Demo" : "Real"}</span>
                 </button>
               </div>
+              {/* Mode Toast (inline, right above mode toggle) */}
+              {showModeToast && (
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-gray-900 text-yellow-200 border border-yellow-400 px-3 py-1 rounded shadow-lg text-xs animate-fade-in z-50">
+                  Switch to Real Mode for live feedback!
+                </div>
+              )}
             </div>
           </div>
         </div>

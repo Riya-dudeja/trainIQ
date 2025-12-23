@@ -1,7 +1,12 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function Home() {
+  const [showDemo, setShowDemo] = useState(false);
+  const handleDemoOpen = () => setShowDemo(true);
+  const handleDemoClose = () => setShowDemo(false);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-white overflow-hidden">
       {/* Subtle Background */}
@@ -67,9 +72,60 @@ export default function Home() {
               >
                 Start Training
               </Link>
-              <button className="border border-gray-600/50 hover:border-gray-500/70 text-gray-300 hover:text-white py-3 px-6 rounded-lg transition-all duration-200">
+              <button
+                className="border border-gray-600/50 hover:border-gray-500/70 text-gray-300 hover:text-white py-3 px-6 rounded-lg transition-all duration-200"
+                onClick={handleDemoOpen}
+              >
                 Watch Demo
               </button>
+                  {/* Demo Modal */}
+                  {showDemo && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+                      <div className="bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-lg w-full relative animate-fade-in">
+                        <button
+                          className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
+                          onClick={handleDemoClose}
+                          aria-label="Close Demo"
+                        >
+                          &times;
+                        </button>
+                        <h2 className="text-2xl font-bold text-amber-400 mb-4 text-center">How trainIQ Works</h2>
+                        <div className="space-y-6">
+                          <div className="flex items-center gap-3">
+                            <span className="animate-bounce text-3xl">⬇️</span>
+                            <div>
+                              <div className="font-semibold text-white">Camera Area</div>
+                              <div className="text-gray-300 text-sm">This is where your workout will be analyzed in real time.</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="animate-pulse text-3xl">➡️</span>
+                            <div>
+                              <div className="font-semibold text-white">Live Stats</div>
+                              <div className="text-gray-300 text-sm">See your form score, rep count, and instant feedback here.</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="animate-bounce text-3xl">⬆️</span>
+                            <div>
+                              <div className="font-semibold text-white">AI Coaching</div>
+                              <div className="text-gray-300 text-sm">Get tips like <span className="text-green-400">"Keep your back straight!"</span> or <span className="text-green-400">"Great form!"</span></div>
+                            </div>
+                          </div>
+                          <div className="bg-amber-500/10 border border-amber-400/30 rounded-lg p-4 text-center mt-6">
+                            <div className="text-lg font-semibold text-amber-300 mb-2">Ready to try for real?</div>
+                            <div className="text-gray-200 mb-3">Switch to Real Mode to start your workout.<br/>Please allow <span className="text-amber-300">camera</span> and <span className="text-amber-300">audio</span> access when prompted.</div>
+                            <button
+                              className="bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-black font-bold py-2 px-6 rounded-lg mt-2 transition-all duration-200"
+                              onClick={() => { setShowDemo(false); window.location.href = '/gym-api'; }}
+                            >
+                              Switch to Real Mode
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
             </div>
           </div>
 
