@@ -239,7 +239,10 @@ export default function Home() {
             >
               <div className="text-center">
                 <div className="w-16 h-16 bg-amber-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">🚀</span>
+                  {/* AI Trainer: Subtle robot head icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-amber-400">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v2m0 0a7 7 0 017 7v3a7 7 0 01-14 0V11a7 7 0 017-7zm-4 7h8m-4 4h.01M9 15h.01M15 15h.01" />
+                  </svg>
                 </div>
                 <h3 className="text-lg font-medium text-white mb-2">AI Trainer</h3>
                 <p className="text-amber-200/70 text-sm mb-3">Complete coaching experience</p>
@@ -256,7 +259,10 @@ export default function Home() {
             >
               <div className="text-center">
                 <div className="w-16 h-16 bg-gray-600/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">⚡</span>
+                  {/* Quick Start: Lightning bolt icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-gray-300">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
                 </div>
                 <h3 className="text-lg font-medium text-white mb-2">Quick Start</h3>
                 <p className="text-gray-300/70 text-sm">Fast workouts</p>
@@ -264,15 +270,19 @@ export default function Home() {
             </Link>
 
             <Link
-              href="/pose"
+              href="/settings"
               className="group bg-gray-900/30 border border-gray-700/30 rounded-xl p-6 hover:border-gray-600/40 transition-all duration-200"
             >
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">📊</span>
+                  {/* Settings: Gear icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-blue-300">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.01c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.01 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.01 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.01c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.572-1.01c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.01-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.01-2.572c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.01z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
                 </div>
-                <h3 className="text-lg font-medium text-white mb-2">Analytics</h3>
-                <p className="text-gray-300/70 text-sm">Movement analysis</p>
+                <h3 className="text-lg font-medium text-white mb-2">Settings</h3>
+                <p className="text-gray-300/70 text-sm">App preferences</p>
               </div>
             </Link>
 
@@ -282,7 +292,10 @@ export default function Home() {
             >
               <div className="text-center">
                 <div className="w-16 h-16 bg-purple-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  <span className="text-3xl">💪</span>
+                  {/* Exercises: Dumbbell icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-purple-300">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 6.75v-1.5a.75.75 0 00-1.5 0v1.5m0 10.5v1.5a.75.75 0 001.5 0v-1.5m10.5-10.5v-1.5a.75.75 0 00-1.5 0v1.5m0 10.5v1.5a.75.75 0 001.5 0v-1.5m-12-7.5h15m-15 6h15m-10.5-6v6m6-6v6" />
+                  </svg>
                 </div>
                 <h3 className="text-lg font-medium text-white mb-2">Exercises</h3>
                 <p className="text-gray-300/70 text-sm">Browse library</p>

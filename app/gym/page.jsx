@@ -1,5 +1,16 @@
 "use client";
 
+// Speak a message using the Web Speech API
+function speakMessage(message) {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utterance = new window.SpeechSynthesisUtterance(message);
+  utterance.rate = 1;
+  utterance.pitch = 1;
+  utterance.volume = 1;
+  window.speechSynthesis.speak(utterance);
+}
+
 import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 import Link from "next/link";
@@ -9,7 +20,7 @@ const GYM_POSES = {
   pushup: {
     name: "Push-up",
     description: "Keep your body straight, lower chest to ground",
-    icon: "💪",
+    icon: "",
     targetAngles: {
       leftElbow: { min: 80, max: 100, ideal: 90 },
       rightElbow: { min: 80, max: 100, ideal: 90 },
@@ -28,7 +39,7 @@ const GYM_POSES = {
   squat: {
     name: "Squat",
     description: "Lower your body as if sitting back into a chair",
-    icon: "🏋️",
+    icon: "",
     targetAngles: {
       leftKnee: { min: 80, max: 120, ideal: 100 },
       rightKnee: { min: 80, max: 120, ideal: 100 },
@@ -47,7 +58,7 @@ const GYM_POSES = {
   plank: {
     name: "Plank",
     description: "Hold a straight body position",
-    icon: "⏱️",
+    icon: "",
     targetAngles: {
       leftElbow: { min: 85, max: 95, ideal: 90 },
       rightElbow: { min: 85, max: 95, ideal: 90 },
@@ -71,6 +82,17 @@ export default function GymPage() {
   const [selectedPose, setSelectedPose] = useState("pushup");
   const [currentAngles, setCurrentAngles] = useState({});
   const [feedback, setFeedback] = useState([]);
+  const [feedbackIndex, setFeedbackIndex] = useState(0);
+    // Cycle through feedback messages if there are multiple
+    useEffect(() => {
+      if (feedback.length <= 1) return;
+      const interval = setInterval(() => {
+        setFeedbackIndex((prev) => (prev + 1) % feedback.length);
+      }, 3500);
+      return () => clearInterval(interval);
+    }, [feedback]);
+  const [currentTipIndex, setCurrentTipIndex] = useState(0);
+  const [showTip, setShowTip] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [poseScore, setPoseScore] = useState(0);
   const [isHydrated, setIsHydrated] = useState(false);
@@ -78,6 +100,27 @@ export default function GymPage() {
   const [mediaPipeLoaded, setMediaPipeLoaded] = useState(false);
 
   // Hydration check
+    // Cycle through tips every 6 seconds and speak them
+    useEffect(() => {
+      if (!showTip) return;
+      const tips = GYM_POSES[selectedPose].instructions;
+      if (tips.length <= 1) return;
+      speakMessage(tips[currentTipIndex]);
+      const interval = setInterval(() => {
+        setCurrentTipIndex((prev) => {
+          const next = (prev + 1) % tips.length;
+          speakMessage(tips[next]);
+          return next;
+        });
+      }, 6000);
+      return () => clearInterval(interval);
+    }, [selectedPose, showTip, currentTipIndex]);
+    // Speak feedback when it changes
+    useEffect(() => {
+      if (feedback.length > 0) {
+        speakMessage(feedback[feedbackIndex]);
+      }
+    }, [feedback, feedbackIndex]);
   useEffect(() => {
     setIsHydrated(true);
   }, []);
@@ -204,9 +247,9 @@ export default function GymPage() {
               const target = targetAngles[angleKey];
               
               if (currentAngle < target.min) {
-                feedback.push(`${angleKey.replace(/([A-Z])/g, ' $1').toLowerCase()} is too small. Increase to ${target.ideal}°`);
+                feedback.push(`Lift your ${angleKey.replace(/([A-Z])/g, ' $1').toLowerCase()} to around ${target.ideal} degrees.`);
               } else if (currentAngle > target.max) {
-                feedback.push(`${angleKey.replace(/([A-Z])/g, ' $1').toLowerCase()} is too large. Decrease to ${target.ideal}°`);
+                feedback.push(`Adjust your ${angleKey.replace(/([A-Z])/g, ' $1').toLowerCase()} to around ${target.ideal} degrees.`);
               }
             }
           });
@@ -452,7 +495,7 @@ export default function GymPage() {
                       ? "bg-amber-500/20" 
                       : "bg-gray-600/20 group-hover:bg-gray-600/30"
                   }`}>
-                    <span className="text-3xl">{GYM_POSES[poseKey].icon}</span>
+                    {/* Icon removed for professional look */}
                   </div>
                   <h3 className={`text-lg font-semibold mb-2 transition-colors ${
                     selectedPose === poseKey ? "text-amber-300" : "text-white"
@@ -545,9 +588,13 @@ export default function GymPage() {
               <div className="absolute bottom-2 left-2 right-2 md:bottom-4 md:left-4 md:right-4">
                 <div className="bg-black/70 backdrop-blur-sm text-white px-2 py-2 md:px-4 md:py-3 rounded-lg">
                   {feedback.length > 0 ? (
-                    <div className="flex items-start">
-                      <span className="text-red-400 mr-1 md:mr-2 text-xs md:text-sm">⚠️</span>
-                      <div className="text-xs md:text-sm text-red-200 leading-tight">{feedback[0]}</div>
+                    <div className="flex flex-col gap-1">
+                      {feedback.map((msg, idx) => (
+                        <div key={idx} className={`flex items-start ${idx === feedbackIndex ? 'opacity-100' : 'opacity-60'}`}>
+                          <span className="text-red-400 mr-1 md:mr-2 text-xs md:text-sm">⚠️</span>
+                          <div className="text-xs md:text-sm text-red-200 leading-tight">{msg}</div>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="flex items-center">
@@ -579,8 +626,22 @@ export default function GymPage() {
               <div className="text-gray-300">
                 {!mediaPipeLoaded ? "Loading AI..." : 
                  cameraError ? "Camera access required" : 
-                 poseScore === 0 ? "Position yourself in the camera view" : 
-                 "Great form! Keep it up!"}
+                 poseScore === 0 ? (
+                   GYM_POSES[selectedPose].instructions[currentTipIndex] || "Position yourself in the camera view"
+                 ) : (
+                   feedback.length > 0 ? feedback[0] : "Great form! Keep it up!"
+                 )}
+                      {/* Persistent Tips Overlay */}
+                      {showTip && (
+                        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-black/80 border border-amber-400 rounded-xl px-6 py-3 shadow-lg flex items-center gap-3 animate-fade-in">
+                          <span className="text-white font-medium">{GYM_POSES[selectedPose].instructions[currentTipIndex]}</span>
+                          <button
+                            className="ml-4 text-gray-400 hover:text-amber-400 text-xs border border-gray-700 rounded px-2 py-1 transition"
+                            onClick={() => setShowTip(false)}
+                            aria-label="Hide tips"
+                          >Hide</button>
+                        </div>
+                      )}
               </div>
             )}
           </div>
@@ -590,7 +651,7 @@ export default function GymPage() {
         <div className="max-w-3xl mx-auto">
           <div className="bg-gray-900/30 rounded-xl p-6">
             <div className="flex items-center mb-4">
-              <span className="text-2xl mr-3">{GYM_POSES[selectedPose].icon}</span>
+              {/* Icon removed for professional look */}
               <h3 className="text-xl font-semibold text-white">{GYM_POSES[selectedPose].name}</h3>
             </div>
             <p className="text-gray-300 mb-4">{GYM_POSES[selectedPose].description}</p>
