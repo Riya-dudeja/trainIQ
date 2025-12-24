@@ -74,54 +74,33 @@ export default function Home() {
               >
                 Watch Demo
               </button>
-                  {/* Demo Modal */}
-                  {showDemo && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-                      <div className="bg-gray-900 rounded-2xl shadow-2xl p-8 max-w-lg w-full relative animate-fade-in">
-                        <button
-                          className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
-                          onClick={handleDemoClose}
-                          aria-label="Close Demo"
-                        >
-                          &times;
-                        </button>
-                        <h2 className="text-2xl font-bold text-blue-400 mb-4 text-center">How trainIQ Works</h2>
-                        <div className="space-y-6">
-                          <div className="flex items-center gap-3">
-                            <span className="animate-bounce text-3xl">⬇️</span>
-                            <div>
-                              <div className="font-semibold text-white">Camera Area</div>
-                              <div className="text-gray-300 text-sm">This is where your workout will be analyzed in real time.</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="animate-pulse text-3xl">➡️</span>
-                            <div>
-                              <div className="font-semibold text-white">Live Stats</div>
-                              <div className="text-gray-300 text-sm">See your form score, rep count, and instant feedback here.</div>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-3">
-                            <span className="animate-bounce text-3xl">⬆️</span>
-                            <div>
-                              <div className="font-semibold text-white">Live Coaching</div>
-                              <div className="text-gray-300 text-sm">Get tips like <span className="text-green-400">"Keep your back straight!"</span> or <span className="text-green-400">"Great form!"</span></div>
-                            </div>
-                          </div>
-                          <div className="bg-blue-500/10 border border-blue-400/30 rounded-lg p-4 text-center mt-6">
-                            <div className="text-lg font-semibold text-blue-300 mb-2">Ready to try for real?</div>
-                            <div className="text-gray-200 mb-3">Switch to Real Mode to start your workout.<br/>Please allow <span className="text-blue-300">camera</span> and <span className="text-blue-300">audio</span> access when prompted.</div>
-                            <button
-                              className="bg-gradient-to-r from-blue-700 to-blue-400 hover:from-blue-600 hover:to-blue-300 text-white font-bold py-2 px-6 rounded-lg mt-2 transition-all duration-200"
-                              onClick={() => { setShowDemo(false); window.location.href = '/gym-api'; }}
-                            >
-                              Switch to Real Mode
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+              {/* Video Modal */}
+              {showDemo && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+                  <div className="bg-gray-900 rounded-2xl shadow-2xl p-4 max-w-2xl w-full relative animate-fade-in">
+                    <button
+                      className="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl"
+                      onClick={handleDemoClose}
+                      aria-label="Close Demo"
+                    >
+                      &times;
+                    </button>
+                    <div className="aspect-w-16 aspect-h-9 w-full rounded-lg overflow-hidden">
+                      {/* Replace the src below with your actual video file or YouTube embed */}
+                      <iframe
+                        width="100%"
+                        height="400"
+                        src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+                        title="Demo Video"
+                        frameBorder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-80 rounded-lg"
+                      ></iframe>
                     </div>
-                  )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

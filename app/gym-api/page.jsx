@@ -117,7 +117,7 @@ export default function GymAPIPage() {
 
   // Helper function to check if selected exercise is a yoga pose
   const isYogaPose = (exerciseId) => {
-    return ['mountain-pose', 'downward-dog', 'child-pose', 'cobra-pose', 'triangle-pose', 'warrior-pose', 'tree-pose'].includes(exerciseId);
+    return ['mountain-pose', 'child-pose', 'cobra-pose', 'triangle-pose', 'warrior-pose', 'tree-pose'].includes(exerciseId);
   };
 
   // Reset exercise states when exercise changes
@@ -199,19 +199,7 @@ export default function GymAPIPage() {
       const randomTip = mountainTips[Math.floor(Math.random() * mountainTips.length)];
       instructions.push(randomTip);
     }
-    else if (selectedExercise?.id === 'downward-dog') {
-      const dogTips = [
-        "Press your palms firmly into the ground",
-        "Lift your hips up and back to create an inverted V",
-        "Straighten your arms and legs as much as possible",
-        "Keep your head between your arms",
-        "Press your heels toward the ground",
-        "Engage your core and breathe steadily",
-        "Create length through your spine"
-      ];
-      const randomTip = dogTips[Math.floor(Math.random() * dogTips.length)];
-      instructions.push(randomTip);
-    }
+    // Removed downward-dog pose and feedback
     else if (selectedExercise?.id === 'child-pose') {
       const childTips = [
         "Kneel on your mat with big toes touching",

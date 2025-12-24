@@ -313,7 +313,7 @@ export default function GymPage() {
 
             // Draw angle measurements
             ctx.font = "16px Arial";
-            ctx.fillStyle = "yellow";
+            ctx.fillStyle = "#cbd5e1"; // slate-300
             
             // Display key angles for the selected pose
             const keyAngles = Object.keys(targetPose.targetAngles);
@@ -410,7 +410,7 @@ export default function GymPage() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-amber-400/80 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-slate-400/80 mx-auto mb-4"></div>
           <p className="text-xl text-gray-300">Loading trainIQ...</p>
         </div>
       </div>
@@ -421,9 +421,9 @@ export default function GymPage() {
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-white overflow-hidden">
       {/* Subtle Background Effects */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-950/10 via-transparent to-gray-950"></div>
-        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-amber-500/3 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-yellow-600/3 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900/10 via-transparent to-gray-950"></div>
+        <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-slate-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-80 h-80 bg-slate-400/10 rounded-full blur-3xl"></div>
       </div>
 
       {/* Navigation */}
@@ -432,12 +432,12 @@ export default function GymPage() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-amber-600/80 to-yellow-600/80 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-slate-600/80 to-slate-400/80 rounded-lg flex items-center justify-center">
                 <span className="text-black font-semibold text-sm">T</span>
               </div>
               <div>
                 <span className="text-white text-xl font-semibold tracking-tight">trainIQ</span>
-                <div className="text-amber-400/60 text-xs font-medium">QUICK START</div>
+                <div className="text-blue-200/80 text-xs font-medium">QUICK START</div>
               </div>
             </Link>
 
@@ -466,7 +466,7 @@ export default function GymPage() {
           <h1 className="text-4xl md:text-5xl font-semibold mb-4 leading-tight">
             <span className="text-white">Quick Start</span>
             <br />
-            <span className="bg-gradient-to-r from-amber-400/90 via-yellow-500/90 to-amber-500/90 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-200/90 via-slate-400/90 to-blue-300/90 bg-clip-text text-transparent">
               Form Trainer
             </span>
           </h1>
@@ -485,20 +485,20 @@ export default function GymPage() {
                 onClick={() => setSelectedPose(poseKey)}
                 className={`group relative p-6 rounded-xl border transition-all duration-200 ${
                   selectedPose === poseKey
-                    ? "bg-amber-500/10 border-amber-500/30 shadow-lg shadow-amber-500/10"
+                    ? "bg-slate-500/10 border-slate-500/30 shadow-lg shadow-slate-500/10"
                     : "bg-gray-900/30 border-gray-700/30 hover:border-gray-600/40 hover:bg-gray-900/50"
                 }`}
               >
                 <div className="text-center">
                   <div className={`w-16 h-16 mx-auto mb-4 rounded-xl flex items-center justify-center transition-colors ${
                     selectedPose === poseKey 
-                      ? "bg-amber-500/20" 
+                      ? "bg-slate-500/20" 
                       : "bg-gray-600/20 group-hover:bg-gray-600/30"
                   }`}>
                     {/* Icon removed for professional look */}
                   </div>
                   <h3 className={`text-lg font-semibold mb-2 transition-colors ${
-                    selectedPose === poseKey ? "text-amber-300" : "text-white"
+                    selectedPose === poseKey ? "text-blue-200" : "text-white"
                   }`}>
                     {GYM_POSES[poseKey].name}
                   </h3>
@@ -508,7 +508,7 @@ export default function GymPage() {
                 </div>
                 {selectedPose === poseKey && (
                   <div className="absolute top-3 right-3">
-                    <div className="w-3 h-3 bg-amber-400 rounded-full"></div>
+                    <div className="w-3 h-3 bg-blue-200 rounded-full"></div>
                   </div>
                 )}
               </button>
@@ -562,7 +562,7 @@ export default function GymPage() {
                     <p className="text-lg mb-4">{cameraError}</p>
                     <button
                       onClick={() => window.location.reload()}
-                      className="bg-amber-500 hover:bg-amber-600 text-black px-6 py-2 rounded-lg"
+                      className="bg-slate-600 hover:bg-slate-500 text-white px-6 py-2 rounded-lg"
                     >
                       Retry Camera
                     </button>
@@ -579,7 +579,7 @@ export default function GymPage() {
 
               {/* Score overlay */}
               <div className="absolute top-4 right-4">
-                <div className="bg-black/50 text-amber-400 px-3 py-1 rounded text-sm font-medium">
+                <div className="bg-black/50 text-blue-200 px-3 py-1 rounded text-sm font-medium">
                   {poseScore}%
                 </div>
               </div>
@@ -633,7 +633,7 @@ export default function GymPage() {
                  )}
                       {/* Persistent Tips Overlay */}
                       {showTip && (
-                        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-black/80 border border-amber-400 rounded-xl px-6 py-3 shadow-lg flex items-center gap-3 animate-fade-in">
+                        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50 bg-black/80 border border-blue-200 rounded-xl px-6 py-3 shadow-lg flex items-center gap-3 animate-fade-in">
                           <span className="text-white font-medium">{GYM_POSES[selectedPose].instructions[currentTipIndex]}</span>
                           <button
                             className="ml-4 text-gray-400 hover:text-amber-400 text-xs border border-gray-700 rounded px-2 py-1 transition"
