@@ -550,6 +550,20 @@ export function mapExerciseNameToType(exerciseName) {
 // Get target angles for different exercise types
 export function getTargetAngles(exerciseType) {
   const angleTargets = {
+    tree_pose: {
+      // Standing leg should be straight
+      leftKnee: { min: 165, max: 185 },
+      rightKnee: { min: 30, max: 90 }, // lifted leg bent
+      // Hips should be square
+      leftHip: { min: 80, max: 120 },
+      rightHip: { min: 80, max: 120 },
+      // Standing ankle straight, lifted ankle bent
+      leftAnkle: { min: 160, max: 190 },
+      rightAnkle: { min: 30, max: 100 },
+      // Arms overhead or at chest (wide range)
+      leftShoulder: { min: 40, max: 180 },
+      rightShoulder: { min: 40, max: 180 }
+    },
     squat: {
       leftKnee: { min: 80, max: 120 },  // More forgiving knee range
       rightKnee: { min: 80, max: 120 },

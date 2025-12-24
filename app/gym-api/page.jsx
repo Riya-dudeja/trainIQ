@@ -968,7 +968,9 @@ export default function GymAPIPage() {
             score, 
             feedback: feedback.join(" • "), 
             phase: 'balancing', 
-            reps: score > 75 ? 1 : 0 
+            reps: score > 75 ? 1 : 0,
+            confidence: landmarks?.[0]?.visibility ?? 0,
+            missingLandmarks: landmarks.filter(lm => (lm?.visibility ?? 0) < 0.5).map((_, idx) => idx)
           };
         }
 
