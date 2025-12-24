@@ -11,9 +11,9 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-br from-gray-950 via-slate-900 to-gray-950 text-white overflow-hidden">
       {/* Subtle Background */}
       <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-amber-950/10 via-transparent to-gray-950"></div>
-        <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-amber-500/3 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/3 left-1/3 w-80 h-80 bg-yellow-600/3 rounded-full blur-3xl"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/20 via-transparent to-gray-950"></div>
+        <div className="absolute top-1/3 right-1/3 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-1/3 left-1/3 w-80 h-80 bg-blue-700/10 rounded-full blur-3xl"></div>
       </div>
 
       {/* Navigation */}
@@ -22,12 +22,11 @@ export default function Home() {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-r from-amber-600/80 to-yellow-600/80 rounded-lg flex items-center justify-center">
-                <span className="text-black font-semibold text-sm">T</span>
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-700/80 to-blue-400/80 rounded-lg flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">T</span>
               </div>
               <div>
                 <span className="text-white text-xl font-semibold tracking-tight">trainIQ</span>
-                <div className="text-amber-400/60 text-xs font-medium">AI FITNESS COACH</div>
               </div>
             </div>
 
@@ -36,10 +35,7 @@ export default function Home() {
               <a href="#modes" className="text-gray-400 hover:text-white transition-colors">
                 Training Modes
               </a>
-              <a href="#features" className="text-gray-400 hover:text-white transition-colors">
-                Features
-              </a>
-              <Link href="/gym-api" className="bg-gradient-to-r from-amber-600/90 to-yellow-600/90 hover:from-amber-600 hover:to-yellow-600 text-black font-medium px-5 py-2.5 rounded-lg transition-all duration-200">
+              <Link href="/gym-api" className="bg-gradient-to-r from-blue-700/90 to-blue-400/90 hover:from-blue-700 hover:to-blue-400 text-white font-medium px-5 py-2.5 rounded-lg transition-all duration-200">
                 Start Training
               </Link>
             </div>
@@ -54,9 +50,9 @@ export default function Home() {
           {/* Main Heading */}
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-semibold mb-6 leading-tight">
-              <span className="text-white">AI Fitness Coach</span>
+              <span className="text-white">Fitness Coach</span>
               <br />
-              <span className="bg-gradient-to-r from-amber-400/90 via-yellow-500/90 to-amber-500/90 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-400/90 via-blue-500/90 to-blue-600/90 bg-clip-text text-transparent">
                 That Actually Works
               </span>
             </h1>
@@ -68,7 +64,7 @@ export default function Home() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/gym-api"
-                className="bg-gradient-to-r from-amber-600/90 to-yellow-600/90 hover:from-amber-600 hover:to-yellow-600 text-black font-medium py-3 px-6 rounded-lg transition-all duration-200"
+                className="bg-gradient-to-r from-blue-700/90 to-blue-400/90 hover:from-blue-700 hover:to-blue-400 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200"
               >
                 Start Training
               </Link>
@@ -89,7 +85,7 @@ export default function Home() {
                         >
                           &times;
                         </button>
-                        <h2 className="text-2xl font-bold text-amber-400 mb-4 text-center">How trainIQ Works</h2>
+                        <h2 className="text-2xl font-bold text-blue-400 mb-4 text-center">How trainIQ Works</h2>
                         <div className="space-y-6">
                           <div className="flex items-center gap-3">
                             <span className="animate-bounce text-3xl">⬇️</span>
@@ -108,15 +104,15 @@ export default function Home() {
                           <div className="flex items-center gap-3">
                             <span className="animate-bounce text-3xl">⬆️</span>
                             <div>
-                              <div className="font-semibold text-white">AI Coaching</div>
+                              <div className="font-semibold text-white">Live Coaching</div>
                               <div className="text-gray-300 text-sm">Get tips like <span className="text-green-400">"Keep your back straight!"</span> or <span className="text-green-400">"Great form!"</span></div>
                             </div>
                           </div>
-                          <div className="bg-amber-500/10 border border-amber-400/30 rounded-lg p-4 text-center mt-6">
-                            <div className="text-lg font-semibold text-amber-300 mb-2">Ready to try for real?</div>
-                            <div className="text-gray-200 mb-3">Switch to Real Mode to start your workout.<br/>Please allow <span className="text-amber-300">camera</span> and <span className="text-amber-300">audio</span> access when prompted.</div>
+                          <div className="bg-blue-500/10 border border-blue-400/30 rounded-lg p-4 text-center mt-6">
+                            <div className="text-lg font-semibold text-blue-300 mb-2">Ready to try for real?</div>
+                            <div className="text-gray-200 mb-3">Switch to Real Mode to start your workout.<br/>Please allow <span className="text-blue-300">camera</span> and <span className="text-blue-300">audio</span> access when prompted.</div>
                             <button
-                              className="bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 text-black font-bold py-2 px-6 rounded-lg mt-2 transition-all duration-200"
+                              className="bg-gradient-to-r from-blue-700 to-blue-400 hover:from-blue-600 hover:to-blue-300 text-white font-bold py-2 px-6 rounded-lg mt-2 transition-all duration-200"
                               onClick={() => { setShowDemo(false); window.location.href = '/gym-api'; }}
                             >
                               Switch to Real Mode
@@ -137,7 +133,7 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-3">
                     <div className="w-3 h-3 bg-red-400 rounded-full"></div>
-                    <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                    <div className="w-3 h-3 bg-blue-400 rounded-full"></div>
                     <div className="w-3 h-3 bg-green-400 rounded-full"></div>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -170,9 +166,9 @@ export default function Home() {
                   
                   {/* Stats Panel */}
                   <div className="space-y-4">
-                    <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 text-center">
-                      <div className="text-2xl font-semibold text-amber-400 mb-1">94%</div>
-                      <div className="text-amber-300/70 text-sm">Form Score</div>
+                    <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 text-center">
+                      <div className="text-2xl font-semibold text-blue-400 mb-1">94%</div>
+                      <div className="text-blue-300/70 text-sm">Form Score</div>
                     </div>
                     
                     <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-center">
@@ -193,7 +189,7 @@ export default function Home() {
           {/* Features */}
           <div className="grid md:grid-cols-3 gap-6 mb-16">
             <div className="bg-gray-900/30 border border-gray-700/30 rounded-xl p-6 text-center">
-              <div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+              <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🎯</span>
               </div>
               <h3 className="text-lg font-medium text-white mb-2">Perfect Form</h3>
@@ -224,7 +220,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-semibold text-white mb-4">
-              Training <span className="text-amber-400/90">Modes</span>
+              Training <span className="text-blue-400/90">Modes</span>
             </h2>
             <p className="text-gray-300 max-w-2xl mx-auto">
               Choose your preferred training experience
@@ -235,18 +231,18 @@ export default function Home() {
             {/* Primary Mode */}
             <Link
               href="/gym-api"
-              className="group relative bg-amber-500/5 border border-amber-500/20 rounded-xl p-6 hover:border-amber-500/30 transition-all duration-200"
+              className="group relative bg-blue-500/5 border border-blue-500/20 rounded-xl p-6 hover:border-blue-500/30 transition-all duration-200"
             >
               <div className="text-center">
-                <div className="w-16 h-16 bg-amber-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
-                  {/* AI Trainer: Subtle robot head icon */}
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-amber-400">
+                <div className="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mx-auto mb-4">
+                  {/* Trainer: Subtle person icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-blue-400">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 2v2m0 0a7 7 0 017 7v3a7 7 0 01-14 0V11a7 7 0 017-7zm-4 7h8m-4 4h.01M9 15h.01M15 15h.01" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-white mb-2">AI Trainer</h3>
-                <p className="text-amber-200/70 text-sm mb-3">Complete coaching experience</p>
-                <div className="bg-amber-500/20 text-amber-300 px-3 py-1 rounded-md text-xs font-medium">
+                <h3 className="text-lg font-medium text-white mb-2">Trainer</h3>
+                <p className="text-blue-200/70 text-sm mb-3">Complete coaching experience</p>
+                <div className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-md text-xs font-medium">
                   Recommended
                 </div>
               </div>
@@ -318,7 +314,7 @@ export default function Home() {
             
             <Link
               href="/gym-api"
-              className="inline-flex items-center bg-gradient-to-r from-amber-600/90 to-yellow-600/90 hover:from-amber-600 hover:to-yellow-600 text-black font-medium py-4 px-8 rounded-lg transition-all duration-200"
+              className="inline-flex items-center bg-gradient-to-r from-blue-700/90 to-blue-400/90 hover:from-blue-700 hover:to-blue-400 text-white font-medium py-4 px-8 rounded-lg transition-all duration-200"
             >
               Start Training Now
             </Link>
@@ -335,17 +331,16 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
-              <div className="w-8 h-8 bg-gradient-to-r from-amber-600/80 to-yellow-600/80 rounded-lg flex items-center justify-center">
-                <span className="text-black font-semibold text-sm">T</span>
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-700/80 to-blue-400/80 rounded-lg flex items-center justify-center">
+                <span className="text-white font-semibold text-sm">T</span>
               </div>
               <div>
                 <span className="text-white text-lg font-semibold">trainIQ</span>
-                <div className="text-amber-400/60 text-xs">AI FITNESS COACH</div>
               </div>
             </div>
             
             <div className="text-gray-400 text-sm">
-              © 2025 trainIQ. AI fitness for everyone.
+              © 2025 trainIQ. Fitness for everyone.
             </div>
           </div>
         </div>

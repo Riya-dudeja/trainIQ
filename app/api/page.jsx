@@ -72,12 +72,11 @@ export default function ExercisesPage() {
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-slate-600 to-slate-500 rounded-xl flex items-center justify-center">
                   <span className="text-white font-bold text-lg">T</span>
                 </div>
                 <div>
                   <span className="text-white text-2xl font-bold">TrainIQ</span>
-                  <div className="text-blue-300 text-xs font-medium">AI FITNESS TRAINER</div>
                 </div>
               </Link>
               <div className="text-gray-300">Exercise Database</div>
@@ -88,8 +87,8 @@ export default function ExercisesPage() {
         {/* Loading State */}
         <div className="flex items-center justify-center min-h-[80vh]">
           <div className="text-center">
-            <div className="w-16 h-16 bg-gradient-to-r from-gray-700 to-blue-700 rounded-full animate-spin flex items-center justify-center mb-4 mx-auto">
-              <div className="w-8 h-8 bg-blue-900 rounded-full"></div>
+            <div className="w-16 h-16 bg-gradient-to-r from-slate-700 to-slate-500 rounded-full animate-spin flex items-center justify-center mb-4 mx-auto">
+              <div className="w-8 h-8 bg-slate-800 rounded-full"></div>
             </div>
             <div className="text-white text-xl font-semibold">Loading exercises...</div>
             <div className="text-gray-400 mt-2">Fetching the latest workout data</div>
@@ -107,12 +106,11 @@ export default function ExercisesPage() {
           <div className="container mx-auto px-6 py-4">
             <div className="flex items-center justify-between">
               <Link href="/" className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-r from-slate-600 to-slate-500 rounded-xl flex items-center justify-center">
                   <span className="text-white font-bold text-lg">T</span>
                 </div>
                 <div>
                   <span className="text-white text-2xl font-bold">TrainIQ</span>
-                  <div className="text-blue-300 text-xs font-medium">AI FITNESS TRAINER</div>
                 </div>
               </Link>
               <div className="text-gray-300">Exercise Database</div>
@@ -130,7 +128,7 @@ export default function ExercisesPage() {
             <div className="text-gray-400 mb-6">{error}</div>
             <button 
               onClick={fetchExercises}
-              className="bg-gradient-to-r from-gray-700 to-blue-700 hover:from-blue-700 hover:to-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300"
+              className="bg-gradient-to-r from-slate-700 to-slate-500 hover:from-slate-600 hover:to-slate-500 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300"
             >
               Try Again
             </button>
@@ -143,16 +141,15 @@ export default function ExercisesPage() {
   return (
     <div className="min-h-screen relative text-white" style={{background: '#181c24'}}>
       {/* Navigation */}
-      <nav className="bg-[#181c24]/95 border-b border-slate-800 sticky top-0 z-50 shadow">
+      <nav className="bg-slate-900/95 border-b border-slate-800 sticky top-0 z-50 shadow">
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-slate-800 rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-10 h-10 bg-gradient-to-r from-slate-600 to-slate-500 rounded-xl flex items-center justify-center shadow-md">
                 {/* <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 2l2.09 6.26L20 9.27l-5 3.64L16.18 20 12 16.77 7.82 20 9 12.91l-5-3.64 5.91-.01z" /></svg> */}
               </div>
               <div>
                 <span className="text-white text-2xl font-extrabold tracking-tight">TrainIQ</span>
-                <div className="text-slate-300 text-xs font-medium">AI FITNESS TRAINER</div>
               </div>
             </Link>
             <div className="text-slate-200 font-semibold tracking-wide text-lg">Exercise Database</div>
@@ -164,7 +161,7 @@ export default function ExercisesPage() {
       <div className="container mx-auto px-4 py-10 md:py-14">
         <div className={`text-center mb-8 md:mb-12 transition-all duration-1000 ${isLoaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-2 tracking-tight">
-            <span className="text-slate-100">Exercise <span className="text-blue-400">Database</span></span>
+            <span className="text-slate-100">Exercise <span className="text-blue-200">Database</span></span>
           </h1>
           <p className="text-base md:text-lg text-slate-300 max-xl mx-auto font-medium">
             Discover hundreds of exercises with detailed instructions, target muscles, and equipment requirements.<br className="hidden md:block"/> Perfect for beginners starting their fitness journey!
@@ -180,7 +177,7 @@ export default function ExercisesPage() {
                 placeholder="Search exercises..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-800/80 border border-slate-700 rounded-full pl-10 pr-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-400/30 focus:border-blue-400/20 focus:bg-slate-800/90 transition-all duration-300 shadow-sm"
+                className="w-full bg-slate-700/80 border border-slate-600 rounded-full pl-10 pr-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-200/30 focus:border-blue-200/20 focus:bg-slate-700/90 transition-all duration-300 shadow-sm"
                 style={{backdropFilter: 'blur(6px)'}}
               />
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -189,7 +186,7 @@ export default function ExercisesPage() {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-blue-200 hover:text-blue-400 transition-colors duration-200"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-blue-200 hover:text-blue-300 transition-colors duration-200"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -200,7 +197,7 @@ export default function ExercisesPage() {
             <select
               value={selectedBodyPart}
               onChange={(e) => setSelectedBodyPart(e.target.value)}
-                className="bg-slate-800/80 border border-slate-700 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-400/30 focus:border-blue-400/20 focus:bg-slate-800/90 transition-all duration-300 appearance-none cursor-pointer min-w-[120px] shadow-sm"
+                className="bg-slate-700/80 border border-slate-600 rounded-full px-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-200/30 focus:border-blue-200/20 focus:bg-slate-700/90 transition-all duration-300 appearance-none cursor-pointer min-w-[120px] shadow-sm"
             >
               <option value="" className="bg-[#232946]">All Body Parts</option>
               {bodyParts.map(part => (
@@ -244,7 +241,7 @@ export default function ExercisesPage() {
             href="/gym-api"
             className="bg-transparent font-semibold py-2 px-6 rounded-full transition-all duration-300 transform hover:scale-105 flex items-center gap-2 text-base md:text-lg"
           >
-            Start AI Training
+            Start Training
           </Link>
         </div>
 
@@ -385,7 +382,7 @@ export default function ExercisesPage() {
               </div>
               <div>
                 <span className="text-white text-xl font-extrabold tracking-tight">TrainIQ</span>
-                <div className="text-slate-300 text-xs font-medium">AI FITNESS TRAINER</div>
+                
               </div>
             </div>
             <div className="text-slate-400 text-sm">

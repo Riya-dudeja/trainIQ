@@ -2142,7 +2142,7 @@ return (
         {!isFullScreen && (
           <button
             onClick={() => setIsFullScreen(true)}
-            className="absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg font-medium z-10 text-sm"
+            className="absolute bottom-4 right-4 bg-slate-600 hover:bg-slate-700 px-3 py-2 rounded-lg font-medium z-10 text-sm"
           >
             📺 Enter Full Screen
           </button>
@@ -2160,7 +2160,7 @@ return (
 
           {/* Selected Exercise Display */}
           {selectedExercise && (
-            <div className="mb-3 lg:mb-4 p-2 lg:p-3 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 rounded-lg">
+            <div className="mb-3 lg:mb-4 p-2 lg:p-3 bg-gradient-to-r from-purple-500/20 to-slate-500/20 border border-purple-500/30 rounded-lg">
               <div className="flex items-center gap-2 mb-1 lg:mb-2">
                 <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
                 <span className="text-xs lg:text-sm text-purple-300 font-medium">Active Exercise</span>
@@ -2175,9 +2175,9 @@ return (
           {/* Stats Grid */}
           <div className="grid grid-cols-2 gap-2 lg:gap-3 mb-3 lg:mb-4">
             {/* Score Display */}
-            <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 rounded-lg p-2 lg:p-3 text-center">
-              <div className="text-lg lg:text-xl font-bold text-blue-400 mb-1">{poseScore}%</div>
-              <div className="text-xs text-blue-300/70 uppercase tracking-wide">Form Score</div>
+            <div className="bg-gradient-to-br from-slate-500/20 to-slate-600/10 border border-slate-500/30 rounded-lg p-2 lg:p-3 text-center">
+              <div className="text-lg lg:text-xl font-bold text-blue-200 mb-1">{poseScore}%</div>
+              <div className="text-xs text-blue-200/70 uppercase tracking-wide">Form Score</div>
             </div>
 
             {/* Rep Counter / Hold Timer */}
@@ -2189,9 +2189,9 @@ return (
                 </div>
               </div>
             ) : (
-              <div className="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/30 rounded-lg p-2 lg:p-3 text-center">
-                <div className="text-lg lg:text-xl font-bold text-blue-400 mb-1">{pushupCount}</div>
-                <div className="text-xs text-blue-300/70 uppercase tracking-wide">Reps</div>
+              <div className="bg-gradient-to-br from-slate-500/20 to-slate-600/10 border border-slate-500/30 rounded-lg p-2 lg:p-3 text-center">
+                <div className="text-lg lg:text-xl font-bold text-blue-200 mb-1">{pushupCount}</div>
+                <div className="text-xs text-blue-200/70 uppercase tracking-wide">Reps</div>
               </div>
             )}
           </div>
@@ -2220,7 +2220,7 @@ return (
               placeholder="Search exercises..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-2 bg-gray-800/50 border border-gray-600/50 rounded-lg text-sm focus:border-blue-500/50 focus:outline-none text-white"
+              className="w-full p-2 bg-gray-800/50 border border-gray-600/50 rounded-lg text-sm focus:border-blue-200/50 focus:outline-none text-white"
             />
           </div>
           
@@ -2237,7 +2237,7 @@ return (
             ))}
             <button
               onClick={() => setSearchTerm('')}
-              className="px-2 py-1 text-xs bg-blue-600/20 hover:bg-blue-600/30 rounded-md text-blue-300 hover:text-blue-200 transition-colors"
+              className="px-2 py-1 text-xs bg-slate-600/20 hover:bg-slate-600/30 rounded-md text-blue-200 hover:text-blue-100 transition-colors"
             >
               All
             </button>

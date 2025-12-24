@@ -366,7 +366,7 @@ export default function AdvancedGymPage() {
               {apiStatus === "api" ? "🟢 API Connected" : 
                apiStatus === "error" ? "🔴 API Error" : "🟡 Local Mode"}
             </span>
-            {isAnalyzing && <span className="text-blue-400">🔄 Analyzing...</span>}
+            {isAnalyzing && <span className="text-blue-200">🔄 Analyzing...</span>}
           </div>
         </div>
 
@@ -380,7 +380,7 @@ export default function AdvancedGymPage() {
                 onClick={() => setSelectedPose(poseKey)}
                 className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                   selectedPose === poseKey
-                    ? "bg-blue-600 text-white"
+                    ? "bg-slate-600 text-white"
                     : "bg-gray-700 text-gray-300 hover:bg-gray-600"
                 }`}
               >
@@ -395,7 +395,7 @@ export default function AdvancedGymPage() {
           <h2 className="text-xl font-semibold mb-3">Session Statistics</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-400">{sessionStats.totalTime > 0 ? formatTime(sessionStats.totalTime) : "0:00"}</div>
+              <div className="text-2xl font-bold text-blue-200">{sessionStats.totalTime > 0 ? formatTime(sessionStats.totalTime) : "0:00"}</div>
               <div className="text-sm text-gray-400">Total Time</div>
             </div>
             <div className="text-center">
@@ -476,7 +476,7 @@ export default function AdvancedGymPage() {
             <div className="bg-gray-800 rounded-lg p-4">
               <h3 className="font-medium mb-2">Form Score</h3>
               <div className="text-center">
-                <div className="text-4xl font-bold text-blue-400">{poseScore}%</div>
+                <div className="text-4xl font-bold text-blue-200">{poseScore}%</div>
                 <div className="text-sm text-gray-400 mt-1">
                   {poseScore >= 90 ? "Excellent!" : poseScore >= 70 ? "Good" : poseScore >= 50 ? "Fair" : "Needs Work"}
                 </div>
@@ -533,7 +533,7 @@ export default function AdvancedGymPage() {
                     onClick={() => setExercisePhase(phase)}
                     className={`px-3 py-1 rounded text-sm ${
                       exercisePhase === phase
-                        ? "bg-blue-600 text-white"
+                        ? "bg-slate-600 text-white"
                         : "bg-gray-600 text-gray-300 hover:bg-gray-500"
                     }`}
                   >
