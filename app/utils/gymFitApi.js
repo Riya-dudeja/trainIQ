@@ -1,138 +1,87 @@
 import axios from "axios";
 
-// Revert back to original gym-fit API
-const RAPIDAPI_BASE_URL = "https://gym-fit.p.rapidapi.com/v1";
-const RAPIDAPI_KEY = process.env.NEXT_PUBLIC_RAPIDAPI_KEY;
-const RAPIDAPI_HOST = process.env.NEXT_PUBLIC_RAPIDAPI_HOST;
+// Secure client: never send RapidAPI keys from the browser.
+// Route all external requests through server-side API proxies.
+const API_BASE_URL = "/api";
 
 const axiosInstance = axios.create({
-  baseURL: RAPIDAPI_BASE_URL,
+  baseURL: API_BASE_URL,
   headers: {
-    "x-rapidapi-key": RAPIDAPI_KEY,
-    "x-rapidapi-host": RAPIDAPI_HOST,
+    // No secret headers on client. Server-side route handles auth.
+    "Content-Type": "application/json",
   },
 });
 
 // Fetch exercise by ID (axios version)
 export async function getExerciseById(id) {
-  const response = await axiosInstance.get(`/exercises/exercise/${id}`);
-  return response.data;
+  // Hits /api/exercises/[id] server route (secured, validated, rate limited)
+  const response = await axiosInstance.get(`/exercises/${encodeURIComponent(id)}`);
+  const payload = response.data;
+  return payload?.data ?? payload; // unwrap { success, data }
 }
 
 // Search exercises by name (recommended by latest docs)
 export async function searchExercises(query) {
-  const response = await axiosInstance.get(`/exercises/name/${encodeURIComponent(query)}`);
-  return response.data;
+  // Hits /api/exercises?name=...
+  const response = await axiosInstance.get(`/exercises`, { params: { name: query } });
+  const payload = response.data;
+  return payload?.data ?? payload;
 }
 
 // You can add more functions as needed, following the same pattern
 async function rapidApiRequest(endpoint, options = {}) {
-  const url = `${RAPIDAPI_BASE_URL}${endpoint}`;
-  
-  // Check if we have the required API key
-  if (!RAPIDAPI_KEY || RAPIDAPI_KEY === 'your-rapidapi-key-here') {
-    console.warn('RapidAPI key not configured, returning mock data');
-    throw new Error('API_KEY_MISSING');
+  // Client-side wrapper: call server-side API endpoints to avoid exposing secrets.
+  // Map supported RapidAPI endpoints to local proxy routes.
+  const GET = options.method?.toUpperCase?.() || 'GET';
+  let url = '';
+  // endpoint examples used above: /exercises, /exercises/bodyPart/<bp>, /exercises/name/<name>
+  if (endpoint.startsWith('/exercises')) {
+    // For specific filters, convert to query params for our proxy
+    const parts = endpoint.split('/').filter(Boolean);
+    if (parts.length === 2 && parts[1] === 'exercises') {
+      url = '/api/exercises';
+    } else if (parts[1] === 'exercises' && parts[2] === 'bodyPart') {
+      url = `/api/exercises?bodyPart=${encodeURIComponent(parts[3] || '')}`;
+    } else if (parts[1] === 'exercises' && parts[2] === 'target') {
+      url = `/api/exercises?target=${encodeURIComponent(parts[3] || '')}`;
+    } else if (parts[1] === 'exercises' && parts[2] === 'equipment') {
+      url = `/api/exercises?equipment=${encodeURIComponent(parts[3] || '')}`;
+    } else if (parts[1] === 'exercises' && parts[2] === 'name') {
+      url = `/api/exercises?name=${encodeURIComponent(parts[3] || '')}`;
+    } else if (parts[1] === 'exercises' && parts[2]) {
+      // Assume /exercises/<id>
+      url = `/api/exercises/${encodeURIComponent(parts[2])}`;
+    } else {
+      url = '/api/exercises';
+    }
   }
-  
-  const defaultOptions = {
-    method: 'GET',
-    headers: {
-      'x-rapidapi-key': RAPIDAPI_KEY,
-      'x-rapidapi-host': RAPIDAPI_HOST,
-      'Content-Type': 'application/json',
-    },
-  };
-
-  const config = {
-    ...defaultOptions,
-    ...options,
-    headers: {
-      ...defaultOptions.headers,
-      ...options.headers,
-    },
-  };
-
-  console.log(`Making RapidAPI request to: ${url}`);
 
   try {
-    const response = await fetch(url, config);
-    
-    console.log(`Response status: ${response.status} ${response.statusText}`);
-    
-    if (!response.ok) {
-      // Handle specific error cases
-      if (response.status === 404) {
-        console.log(`Endpoint not found: ${endpoint} - this might be expected for some endpoints`);
+    const res = await fetch(url, { method: GET });
+    if (!res.ok) {
+      if (res.status === 429) {
+        throw new Error('RATE_LIMIT_EXCEEDED');
+      }
+      if (res.status === 404) {
         throw new Error('ENDPOINT_NOT_FOUND');
       }
-      
-      // Try to get error details
-      let errorText = '';
-      try {
-        errorText = await response.text();
-      } catch (textError) {
-        console.warn('Could not read error response text:', textError);
-      }
-      
-      let errorMessage = `RapidAPI request failed: ${response.status} ${response.statusText}`;
-      
-      if (response.status === 401) {
-        errorMessage = `Unauthorized: Invalid RapidAPI key. Please check your API key configuration.`;
+      if (res.status === 401) {
         throw new Error('API_KEY_INVALID');
-      } else if (response.status === 403) {
-        errorMessage = `Forbidden: API access denied. Please check your RapidAPI subscription for exercisedb.p.rapidapi.com`;
+      }
+      if (res.status === 403) {
         throw new Error('API_ACCESS_DENIED');
-      } else if (response.status === 429) {
-        errorMessage = `Rate limit exceeded: Too many requests. Please try again later.`;
-        throw new Error('RATE_LIMIT_EXCEEDED');
-      } else if (response.status === 500) {
-        errorMessage = `RapidAPI server error: ${endpoint}. Please try again later.`;
+      }
+      if (res.status >= 500) {
         throw new Error('SERVER_ERROR');
       }
-      
-      console.error('RapidAPI Error Details:', {
-        url,
-        status: response.status,
-        statusText: response.statusText,
-        errorText: errorText.substring(0, 500),
-      });
-      
-      throw new Error(errorMessage);
+      throw new Error(`HTTP_${res.status}`);
     }
-
-    const responseText = await response.text();
-    console.log(`Response received, length: ${responseText.length} characters`);
-    
-    if (!responseText) {
-      console.warn('Empty response from API');
-      return [];
-    }
-    
-    try {
-      const data = JSON.parse(responseText);
-      console.log('Successfully parsed JSON response:', typeof data, Array.isArray(data) ? `Array[${data.length}]` : 'Object');
-      return data;
-    } catch (jsonError) {
-      console.error('Failed to parse JSON response:', jsonError);
-      console.log('Raw response text:', responseText.substring(0, 500));
-      throw new Error(`Invalid JSON response from API: ${jsonError.message}`);
-    }
-    
+    const payload = await res.json();
+    return payload?.data ?? payload;
   } catch (error) {
     if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      console.error('Network error details:', error);
       throw new Error('NETWORK_ERROR');
     }
-    
-    // Re-throw our custom error codes
-    if (error.message.includes('API_KEY_') || error.message.includes('ENDPOINT_') || 
-        error.message.includes('RATE_LIMIT') || error.message.includes('SERVER_ERROR') ||
-        error.message.includes('NETWORK_ERROR')) {
-      throw error;
-    }
-    
-    console.error('RapidAPI request error:', error);
     throw error;
   }
 }

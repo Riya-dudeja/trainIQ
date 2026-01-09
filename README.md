@@ -87,11 +87,17 @@ For more information or collaboration, connect via [GitHub](https://github.com/R
 - Add new exercise types by extending the `exerciseAnalyzers` object in `gym-api/page.jsx`.
 
 ## Troubleshooting
-- **API 404 errors:** Check your `.env.local` for correct RapidAPI host and key.
+- **API 404 errors:** Ensure server-side env vars are set in `.env.local` (`RAPIDAPI_KEY`, `RAPIDAPI_HOST`). Avoid `NEXT_PUBLIC_*` for secrets.
 - **Pose detection issues:** Ensure webcam permissions and CDN scripts are loading.
 - **`[object Event]` errors:** These have been fixed with enhanced error handling in the latest version.
 - **MediaPipe loading issues:** Check browser console for CDN connectivity issues.
 - **Performance issues:** Reduce `modelComplexity` in MediaPipe configuration if needed.
+
+## Security Hardening
+- **Rate Limiting:** All public API routes are protected with IP and optional user-based limits and return graceful 429s.
+- **Input Validation:** Server routes use schema-based validation (types, length limits, and strict field whitelisting).
+- **Secret Management:** RapidAPI keys are server-only via environment variables. Client utilities proxy through server routes; no keys are exposed to the browser.
+- **OWASP Practices:** Whitelisting, canonicalization, and abuse prevention implemented without changing existing responses.
 
 ## License
 MIT

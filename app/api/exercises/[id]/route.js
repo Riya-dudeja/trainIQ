@@ -1,21 +1,42 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { getClientIp, checkRateLimit } from '../../../utils/rateLimiter';
 
 const RAPIDAPI_BASE_URL = 'https://gym-fit.p.rapidapi.com/v1';
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = 'gym-fit.p.rapidapi.com';
 
+// Strict ID schema: alphanumeric and hyphen, length limit
+const ExerciseIdSchema = z.string().trim().regex(/^[a-zA-Z0-9-]+$/).min(1).max(64);
+
 // GET /api/exercises/[id]
 export async function GET(request, { params }) {
   try {
-    const id = params.id;
-    if (!id) {
+    // Rate limiting (IP + optional user-based via header)
+    const ip = getClientIp(request.headers);
+    const userId = request.headers.get('x-user-id') || null; // optional
+    const rl = checkRateLimit({ key: `exercises-id`, ip, userId });
+    if (!rl.allowed) {
       return NextResponse.json(
-        { success: false, error: 'Exercise ID is required' },
-        { status: 400 }
+        { success: false, error: 'Too many requests. Please try again later.' },
+        {
+          status: 429,
+          headers: { 'Retry-After': String(Math.ceil(rl.retryAfterMs / 1000)) },
+        }
       );
     }
 
-    const response = await fetch(`${RAPIDAPI_BASE_URL}/exercises/${id}`, {
+    const rawId = params.id;
+    const parsed = ExerciseIdSchema.safeParse(rawId);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid exercise ID', details: parsed.error.issues },
+        { status: 400 }
+      );
+    }
+    const id = parsed.data;
+
+    const response = await fetch(`${RAPIDAPI_BASE_URL}/exercises/${encodeURIComponent(id)}`, {
       method: 'GET',
       headers: {
         'x-rapidapi-key': RAPIDAPI_KEY,
